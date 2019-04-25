@@ -1,0 +1,22 @@
+.Register {
+  height: 100%;
+  margin: 0;
+  font-size: 1.2rem;
+}
+.Register .R_from {
+  height: 500rpx;
+  font-size: 1rem;
+  padding: 10%;
+  margin: 0 auto;
+  background-color: lightcoral;
+}
+.Register .R_register {
+  width: 80%;
+  height: 80rpx;
+  border-radius: 40rpx;
+  margin-top: 12%;
+  text-align: center;
+  line-height: 80rpx;
+  background-color: lavender;
+}
+

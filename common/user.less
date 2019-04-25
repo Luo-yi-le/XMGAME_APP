@@ -1,0 +1,86 @@
+	page {
+		background-color: #f1f1f1;
+		font-size: 30upx;
+	}
+
+	.li:active {
+		background-color: #eeeeee;
+	}
+
+	.user-data-bar {
+		width: 100%;
+		height: 70upx;
+		background-color: #ffffff;
+		border: 1upx solid #eeeeee;
+		border-bottom: 0;
+		display: flex;
+		padding: 0 80upx 10upx 80upx;
+		box-sizing: border-box;
+		justify-content: space-between;
+
+		.data-bar {
+			line-height: 70upx;
+			font-size: 28upx;
+			color: #707070;
+
+			.data-bar-num {
+				color: #E96D71;
+				font-size: 26upx;
+				margin-left: 10upx;
+			}
+		}
+	}
+
+	.list-content {
+		background: #fff;
+	}
+
+	.list {
+		width: 100%;
+		border-bottom: 15upx solid #f1f1f1;
+		background: #fff;
+
+		&:last-child {
+			border: none;
+		}
+
+		.li {
+			width: 92%;
+			height: 100upx;
+			padding: 0 4%;
+			border-bottom: 1px solid rgb(243, 243, 243);
+			display: flex;
+			align-items: center;
+			color: #707070;
+
+			&.noborder {
+				border-bottom: 0;
+				align-content: center;
+			}
+
+			.icon {
+				flex-shrink: 0;
+				width: 50upx;
+				height: 50upx;
+
+				image {
+					width: 50upx;
+					height: 50upx;
+				}
+			}
+
+			.text {
+				padding-left: 20upx;
+				width: 100%;
+				color: #666;
+				font-size: 30upx;
+			}
+
+			.textName {
+				padding-left: 20upx;
+				width: 100%;
+				color: #666;
+				font-size: 30upx;
+			}
+		}
+	}

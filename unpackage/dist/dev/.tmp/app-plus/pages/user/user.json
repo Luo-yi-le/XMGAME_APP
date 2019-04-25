@@ -1,0 +1,18 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "用户信息",
+  "titleNView": {
+    "buttons": [
+      {
+        "text": "我的",
+        "fontSize": "14",
+        "float": "left"
+      },
+      {
+        "text": "设置",
+        "fontSize": "14",
+        "float": "right"
+      }
+    ]
+  }
+}

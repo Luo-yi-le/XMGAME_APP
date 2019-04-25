@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/user/user",
+    "pages/load/load",
+    "pages/play/play",
+    "pages/over/over",
+    "pages/register/register"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "usingComponents": {},
+  "tabBar": {
+    "color": "#8F8F94",
+    "selectedColor": "#11cd6e",
+    "borderStyle": "black",
+    "list": [
+      {
+        "selectedIconPath": "static/icon/home.png",
+        "iconPath": "static/icon/home1.png",
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "selectedIconPath": "static/icon/me.png",
+        "iconPath": "static/icon/me1.png",
+        "pagePath": "pages/user/user",
+        "text": "用户"
+      }
+    ]
+  },
+  "splashscreen": {
+    "alwaysShowBeforeRender": true,
+    "autoclose": false
+  },
+  "appname": "Game02",
+  "compilerVersion": "1.9.1"
+}

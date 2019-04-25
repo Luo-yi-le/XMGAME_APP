@@ -1,0 +1,13 @@
+
+page{
+	background: url(../../static/img/001.af383702.jpg);
+}
+.zhu{
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	height: 200rpx;
+	color: white;
+}
+

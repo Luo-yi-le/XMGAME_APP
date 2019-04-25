@@ -1,0 +1,2 @@
+setCssToHead(["body{ background: url(../../static/img/001.af383702.jpg-do-not-use-local-path-./pages/play/play.wxss\x263\x2613); }\n.",[1],"zhu{ display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; height: ",[0,200],"; color: white; }\n",],undefined,{path:"./pages/play/play.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/play/play.wxml') } }));
