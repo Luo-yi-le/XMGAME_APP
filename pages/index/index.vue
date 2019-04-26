@@ -79,14 +79,7 @@
 				};
 				this.websocketsend(entity);
 
-				//获取游戏列表 暂时不用获取
-				/*const Game = {
-					"Tag": "ac",
-					"ActionMethod": "GameBLL.GetGames"
-				};
-				setTimeout(() => {
-					this.websocketsend(Game);
-				}, 500)*/
+				
 
 			},
 			webSocketClientOnmessage(e) { //数据接收
