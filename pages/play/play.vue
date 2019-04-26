@@ -36,6 +36,7 @@
 	</view>
 </template>
 <script>
+	var websock;
 	import * as api from '../../static/js/api.js'
 	var i = 0;
 	export default {
@@ -50,7 +51,7 @@
 				index_: 0,
 				index_Count: '',
 				getTopicList: [],
-				name: '',
+				token: '',
 				roomId: '',
 				createTime: '', //创建时间 or 结算时间
 				recordEndTime: '', //创建游戏距离需要带的时间
@@ -62,7 +63,7 @@
 		onLoad: function(option) {
 			//获取名称
 			this.roomId = option.roomID;
-			this.name = option.name;
+			this.token = option.token;
 			console.log(this.roomId)
 			//
 			this.index_Count = this.index_ + 1
@@ -85,7 +86,7 @@
 		methods: {
 			over: function(e) {
 				uni.redirectTo({
-					url: '../over/over?roomId=' + this.roomId+'&name=' + this.name
+					url: '../over/over?roomId=' + this.roomId + '&token=' + this.token
 				})
 			},
 			test() {
@@ -98,92 +99,9 @@
 				this.theme = this.getTopicList.Theme;
 				this.themeId = this.getTopicList.Id;
 			},
-			selectUserInfo() {
-				const that = this;
-				const user = sessionStorage.getItem("userInfo");
-				that.userInfo = JSON.parse(user);
-			},
-			//获取题库
-			GetTopic() {
-				const that = this;
-				uni.request({
-					url: api.GetTopic,
-					method: 'GET',
-					success: res => {
-						if (res.data.Code == 200) {
-							that.getTopicList = res.data.Data;
-							console.log(that.getTopicList)
-						}
-					},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			//添加游戏记录
-			addRecord() {
-				const that = this;
-				uni.request({
-					url: api.AddRecord,
-					method: 'GET',
-					data: {
-						"AccountName": that.name,
-						"CreateTime": that.createTime,
-						"RoomID": that.roomId,
-						"Integral": that.n_integral,
-						"EndTime": that.recordEndTime,
-					},
-					success: res => {
-						if (res.data.Code == 200) {
-							console.log(res.data.Message)
-						}
-					},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			//结束游戏 修改用户
-			updateRecord() {
-				const that = this;
-				if (that.answer != that.getTopicList.Answer || that.answer == '' || that.answer == null) {
-					uni.request({
-						url: api.UpdateRecord,
-						method: 'GET',
-						data: {
-							"AccountName": that.name,
-							'Integral': that.n_integral,
-							'EndTime': that.createTime,
-							'RoomID': that.roomId
-						},
-						success: res => {
-							if (res.data.Code == 200) {
-								alert('答案错误！' + that.n_integral + '积分')
-							}
-						},
-						fail: () => {},
-						complete: () => {}
-					});
-				} else if (that.answer == that.getTopicList.Answer) {
-					uni.request({
-						url: api.UpdateRecord,
-						method: 'GET',
-						data: {
-							"AccountName": that.name,
-							'Integral': that.p_integral,
-							'EndTime': that.createTime,
-							'RoomID': that.roomId
-						},
-						success: res => {
-							if (res.data.Code == 200) {
-								alert('答案正确！+' + that.p_integral + '积分')
-							}
-						},
-						fail: () => {},
-						complete: () => {}
-					});
 
-				}
 
-			},
+
 			//当时间读完后自动结算
 			autopilotRecord() {
 
@@ -202,15 +120,49 @@
 				this.recordEndTime = t;
 				this.createTime = time
 				return this.createTime;
-			}
+			},
+			selectUserInfo() {
+				const that = this;
+				const user = localStorage.getItem("userInfo");
+				that.userInfo = JSON.parse(user);
+			},
+
+			//创建WebSocket连接
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
+			},
+			//打开连接
+			webSocketClientOnopen() {
+				console.log('打开成功')
+			},
+			//数据回收
+			webSocketClientOnmessage(e) {
+				var data = JSON.parse(e.data);
+
+			},
+
+			websocketsend(Data) { //发送数据
+				console.log('数据发送：' + JSON.stringify(Data));
+				websock.send(JSON.stringify(Data));
+			},
+			//重连信息
+			webSocketClientOnerror(e) {
+				this.initWebSocket();
+				console.log("websock连接错误,重新连接", e);
+			},
+			//连接关闭
+			webSocketClientOnclose(e) {
+				console.log("websock连接关闭", e);
+			},
 		},
 		created() {
-			setTimeout(() => {
-				this.addRecord();
-			}, 500)
+			this.initWebSocket();
 			this.getSystemTime();
 			this.selectUserInfo();
-			this.GetTopic();
 		}
 	}
 </script>
