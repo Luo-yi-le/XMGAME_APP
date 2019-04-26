@@ -55,26 +55,12 @@
 		},
 		methods:{
 			loginUser(){
-				/*uni.request({
-					url:api.registerUser,
-					data:{
-						'AccountName':this.user.AccountName,
-						'UserPassWord':this.user.UserPassWord
-					},
-					success:function(res){
-						console.log(res)
-					}
-					
-				})
-				console.log(this.user.AccountName);
-				console.log(this.user.UserPassWord)*/
+			
 				this.initWebSocket();
 			},
 			//创建WebSocket连接
 			initWebSocket() {
-				
-				const wsuri = "ws://127.0.0.1:4000";
-				websock = new WebSocket(wsuri);
+				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
 				websock.onmessage = this.webSocketClientOnmessage //接收信息
 				websock.onerror = this.webSocketClientOnerror //错误
@@ -137,7 +123,7 @@
 			
 		}
 	}
-	
+	// ldjf
 </script>
 
 <style lang="less">
