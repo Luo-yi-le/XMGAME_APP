@@ -138,6 +138,6 @@ export const getGames=baseUrl+'/Game/GetGames'
 */
 
 
-
-
+//export const wsuri = 'ws://172.16.31.232:4000';
+export const wsuri = 'ws://127.0.0.1:4000';
 

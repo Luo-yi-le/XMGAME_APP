@@ -31,17 +31,18 @@
 				</view> -->
 			</view>
 		</view>
-		<button  class="load_but" @click="preGames">准备游戏</button>
+		<button class="load_but" @click="preGames">准备游戏</button>
 		<button class="load_but" @click="onover">取消游戏</button>
 	</view>
 </template>
 
 <script>
 	var websock;
+	import * as api from '../../static/js/api.js'
 	export default {
-		data() {  
+		data() {
 			return {
-				name: '',
+				token: '',
 				roomID: '',
 				user: '',
 				game: '',
@@ -53,96 +54,96 @@
 					url: '../index/index'
 				})
 			},
-			//通信
-			getSocket: function() {
-				const userInfo = sessionStorage.getItem("userInfo");
-				this.user = JSON.parse(userInfo);
-				const wsuri = "ws://127.0.0.1:4000";
-				websock = new WebSocket(wsuri);
-				websock.onmessage = this.websocketonmessage;
-				websock.onopen = this.websocketonopen;
-				websock.onerror = this.websocketonerror;
-				websock.onclose = this.websocketclose;
+			//创建WebSocket连接
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
 			},
-			websocketonopen(e) { //连接建立之后执行send方法发送数据
+			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
 				let entity = {
-					"FromUser": this.name,
+					"FromUser": this.token,
 					"Tag": "c"
 				};
 				this.websocketsend(entity);
+				
+				//进入房间
 				var c = {
-					"FromUser": this.name,
+					"FromUser": this.token,
 					"Tag": "i",
 					"RoomID": this.roomID == '' ? "" : this.roomID
 				};
 				this.websocketsend(c);
-				console.log(c);
 			},
 
-			websocketonerror() { //连接建立失败重连
-				initWebSocket();
-			},
-			websocketonmessage(e) { //数据接收
-				console.log(e);
-				var data =JSON.parse(e.data);
-				//var data =typeof e.data=='object'? JSON.parse(e.data):e.data;
-				console.log("数据接收232："+typeof data);
+			webSocketClientOnmessage(e) { //数据接收
+				var data = JSON.parse(e.data);
 				if (data.Tag == "b") {
 					uni.reLaunch({
-						url: '../play/play?name=' + this.user.AccountName + '&roomID=' + data.RoomID
+						url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
 					})
 				} else if (data.Tag == "i") {
 					this.roomID = data.RoomID
 				}
-				sessionStorage.setItem('game', JSON.stringify(data));
-				console.log("数据接收：" + JSON.stringify(data));
+				localStorage.setItem('game', JSON.stringify(data));
+				//console.log("数据接收：" + JSON.stringify(data));
 			},
 			websocketsend(Data) { //数据发送
-				console.log('数据发送：' + JSON.stringify(Data));
+				//console.log('数据发送：' + JSON.stringify(Data));
 				websock.send(JSON.stringify(Data));
 			},
 
-			websocketclose(e) { //关闭
+			webSocketClientOnclose(e) { //关闭
 			},
-			//提示用户进入房间
+			webSocketClientOnerror() { //连接建立失败重连
+				this.initWebSocket();
+			},
+			//提示用户进入房间name
 			showUser() {
-				var game1 = sessionStorage.getItem("game");
+				var game1 = localStorage.getItem("game");
 				this.game = JSON.parse(game1);
 				console.log(this.game.FromUser)
 				uni.showToast({
-					title: this.game.Message + ': ' + this.game.RoomID,
+					title: "232323;"+this.game.Message + ': ' + this.game.RoomID,
 					duration: 3000
 				});
 			},
 			//用户准备游戏
 			preGames() {
 				var c = {
-					'FromUser': this.user.AccountName,
+					'FromUser': this.token,
 					'Tag': "r",
-					'RoomID':  this.game.RoomID
-				};	 
+					'RoomID': this.game.RoomID
+				};
 				this.websocketsend(c);
-				setTimeout(()=>{
-					var game1 = sessionStorage.getItem("game");
-					this.game = JSON.parse(game1);
-					console.log(this.game.FromUser)
+				setTimeout(() => {
+					var game1 = localStorage.getItem("game");
+
 					uni.showToast({
 						title: this.game.Message + ': ' + this.game.RoomID,
 						duration: 3000
 					});
-				},1000)
-				
-			}
+				}, 1000)
+
+			},
+			//获取用户信息
+			selectUserInfo() {
+				const that = this
+				that.user = JSON.parse(localStorage.getItem('userInfo'))
+			},
 		},
 		onLoad: function(option) {
-			this.name = option.name
-			console.log(this.name);
+			this.token = option.token
+			console.log(this.token);
 		},
 		created() {
+			this.selectUserInfo()
 			setTimeout(() => {
 				this.showUser();
 			}, 500)
-			this.getSocket();
+			this.initWebSocket();
 		}
 	}
 </script>

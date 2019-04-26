@@ -100,9 +100,7 @@
 			},
 			//创建WebSocket连接
 			initWebSocket() {
-				
-				const wsuri = "ws://localhost:4000";
-				websock = new WebSocket(wsuri);
+				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
 				websock.onmessage = this.webSocketClientOnmessage //接收信息
 				websock.onerror = this.webSocketClientOnerror //错误
@@ -115,38 +113,40 @@
 					'AccountName': this.user.accountName,
 					'UserPassWord': this.user.password
 				};
-				var user1=JSON.stringify(user)
+				var user1 = JSON.stringify(user)
 				let actions = {
 					"Message": user1,
 					"Tag": "ac",
 					'ActionMethod': 'UserBLL.Login',
 				};
-				//var data = JSON.parse(actions);
-				websock.send(JSON.stringify(actions));
+				this.websocketsend(actions);
 			},
 			//数据回收
 			webSocketClientOnmessage(e) {
-				var data = JSON.stringify(e.data);
-				if(data.data.Code==200){
-					console.log(data.data.Data);
+				var data = JSON.parse(e.data);
+				var res = JSON.parse(data.Message)
+				if (res.Code == 200) {
+					console.log(res.Data);
 					//使用uni-app中的暂存 确保第二次免登
-					uni.setStorageSync('user',data.data.Data)
+						localStorage.setItem('userInfo',JSON.stringify( res.Data))
+							
+					
 					//提示用户登陆成功
 					uni.showToast({
-						title:data.data.Data.AccountName+data.data.Message,
-						duration:1000
+						title: res.Data.AccountName + res.Message,
+						duration: 1000
 					});
 					//延迟进入首页
-					setTimeout(()=>{
+					setTimeout(() => {
 						uni.reLaunch({
 							url: '../index/index'
 						})
-					},1001)
-				}else{
+					}, 1001)
+				} else {
 					alert('请检查账号密码是否正确！')
 				}
 			},
-			//{"Message":{"user1":"{"AccountName":"kkk","UserPassWord":"123"}"},"Tag":"ac","ActionMethod":"UserBLL.Login"}
+
 			websocketsend(Data) { //发送数据
 				console.log('数据发送：' + JSON.stringify(Data));
 				websock.send(JSON.stringify(Data));
@@ -161,7 +161,7 @@
 				console.log("websock连接关闭", e);
 			},
 		},
-
+		
 		created() {
 			this.openConsole();
 		}
