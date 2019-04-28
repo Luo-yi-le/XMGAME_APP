@@ -37,6 +37,9 @@
 </template>
 
 <script>
+	// 罗贻乐
+	//2019-4-56
+	//修改了准备游戏的bug
 	var websock;
 	import * as api from '../../static/js/api.js'
 	export default {
@@ -68,7 +71,7 @@
 					"Tag": "c"
 				};
 				this.websocketsend(entity);
-				
+
 				//进入房间
 				var c = {
 					"FromUser": this.token,
@@ -77,21 +80,27 @@
 				};
 				this.websocketsend(c);
 			},
-
+			
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
-				if (data.Tag == "b") {
+				if (data.Tag == "r") {
+					var localgame = localStorage.getItem("game");
+					uni.showToast({
+						title: data.Message + ': ' + data.RoomID,
+						duration: 2000
+					});
+				} else if (data.Tag == "i") {
+					this.roomID = data.RoomID
+				} else if (data.Tag == 'b') {
+					//跳到开始游戏的界面 开始游戏的功能若没有成功  该连接会报错
 					uni.reLaunch({
 						url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
 					})
-				} else if (data.Tag == "i") {
-					this.roomID = data.RoomID
 				}
 				localStorage.setItem('game', JSON.stringify(data));
-				//console.log("数据接收：" + JSON.stringify(data));
+
 			},
 			websocketsend(Data) { //数据发送
-				//console.log('数据发送：' + JSON.stringify(Data));
 				websock.send(JSON.stringify(Data));
 			},
 
@@ -106,27 +115,20 @@
 				this.game = JSON.parse(game1);
 				console.log(this.game.FromUser)
 				uni.showToast({
-					title: "232323;"+this.game.Message + ': ' + this.game.RoomID,
+					title: "232323;" + this.game.Message + ': ' + this.game.RoomID,
 					duration: 3000
 				});
 			},
 			//用户准备游戏
 			preGames() {
-				var c = {
+				var game = localStorage.getItem("game");
+				var readyGame = {
 					'FromUser': this.token,
 					'Tag': "r",
 					'RoomID': this.game.RoomID
 				};
-				this.websocketsend(c);
-				setTimeout(() => {
-					var game1 = localStorage.getItem("game");
-
-					uni.showToast({
-						title: this.game.Message + ': ' + this.game.RoomID,
-						duration: 3000
-					});
-				}, 1000)
-
+				this.websocketsend(readyGame);
+				
 			},
 			//获取用户信息
 			selectUserInfo() {

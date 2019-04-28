@@ -101,8 +101,6 @@
 				this.themeId = this.getTopicList.Id;
 			},
 
-
-
 			//当时间读完后自动结算
 			autopilotRecord() {
 
@@ -182,6 +180,7 @@
 			},
 			//打开连接
 			webSocketClientOnopen() {
+
 				console.log('打开成功');
 			/*
 				var  Record= {
@@ -201,6 +200,14 @@
 				};
 				this.websocketsend(Precord);
 				*/
+
+				console.log('打开成功')
+				const topicList={
+					"Tag":"ac",
+					"ActionMethod": "QuestionBLL.GetQuestions"
+				}
+				this.websocketsend(topicList)
+
 			},
 			//数据回收
 			webSocketClientOnmessage(e) {

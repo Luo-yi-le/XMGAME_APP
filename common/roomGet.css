@@ -1,0 +1,61 @@
+/* xzg 时间：2019-4-28 11：00 根据房间进行游戏纪录的查询  房间纪录样式 */
+
+	.topset{
+		display: flex;
+		height: 110upx;
+		background: #5F9EA0;
+		align-items: center;
+	}
+	.list{
+		font-size: 30upx;
+	}
+	.all{
+			height: 100upx;
+			background:cadetblue;
+			display: flex;
+			font-size: 23upx;
+			margin: 10upx;
+			align-items: center;
+		}
+		.img{
+			width: 80upx;
+			height: 80upx;
+			padding:10upx;
+		}
+		.jf1{
+			color: #E96D71;
+			margin-top: 0upx;
+		}
+		.jf2{
+			color: blue;
+			margin-top: 0upx;
+		}
+		.user{
+			color: #0000FF;
+			padding-top: 20upx;
+		}
+		.roomid{
+			font-size: 20upx;
+			background: #E96D71;
+			color:ghostwhite;
+			width: 80upx;
+		}
+		.good{
+			padding: 30upx 10upx;
+			width:340upx
+		}
+		.failure{
+			padding-left: 10px;
+			font-size: 30upx;
+			color:crimson;
+		}
+		.successful{
+			padding-left: 10px;
+			font-size: 30upx;
+			color:skyblue;
+		}
+		.fuhao{
+			font-size: 50upx;
+			padding: 20upx;
+			color: blue;
+		}

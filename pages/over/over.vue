@@ -54,52 +54,70 @@
 </template>
 
 <script>
+	var websock;
 	import * as api from '../../static/js/api.js'
 	export default {
 		data() {
 			return {
 				roomId: '', //获取房间号
-				name:'',//获取用户名称
+				name: '', //获取用户名称
 				getRecordsList: [], //排行榜的集合
 			}
 		},
 		methods: {
 			onpus: function(e) {
 				uni.redirectTo({
-					url: '../load/load?roomId=' + this.roomId+'&name=' + this.name
+					url: '../load/load?roomId=' + this.roomId + '&name=' + this.name
 				})
 			},
 			onover: function(e) {
 				uni.switchTab({
-					url: '../index/index?roomId=' + this.roomId+'&name=' + this.name
+					url: '../index/index?roomId=' + this.roomId + '&name=' + this.name
 				})
 			},
-			//获取排行榜
+			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
-				uni.request({
-					url: api.GetRecords,
-					data: {
-						roomID: this.roomId
-					},
-					method: 'GET',
-					success: res => {
-						if (res.data.Code == 200) {
-							this.getRecordsList = res.data.Data
-							console.log(res.data.Message)
-							console.log(this.getRecordsList)
-						}
-					},
-					fail: () => {},
-					complete: () => {}
-				});
+
+			},
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
+			},
+			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
+				let entity = {
+					"Message":"{'RoomID':'16:10:48'}",
+					"Tag":"ac",
+					"ActionMethod": "RecordBLL.GetRecords"
+				};
+				this.websocketsend(entity);
+			},
+			webSocketClientOnmessage(e) { //数据接收
+				var data = JSON.parse(e.data);
+				var strData=JSON.parse(data.Message);
+				console.log(strData)
+				if(strData.Code==200){
+					this.getRecordsList=strData.Data;
+				}
+			},
+			websocketsend(Data) { //数据发送
+				websock.send(JSON.stringify(Data));
 			},
 
+			webSocketClientOnclose(e) { //关闭
+			},
+			webSocketClientOnerror() { //连接建立失败重连
+				this.initWebSocket();
+			},
 		},
 		onLoad(option) {
 			this.roomId = option.roomId
 			this.name = option.name
 		},
 		created() {
+			this.initWebSocket();
 			this.GetRecords();
 		},
 		//排序
