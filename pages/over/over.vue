@@ -75,7 +75,7 @@
 					url: '../index/index?roomId=' + this.roomId + '&name=' + this.name
 				})
 			},
-			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:37
+			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
 
 			},
