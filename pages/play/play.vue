@@ -33,6 +33,7 @@
 			<button :style="{display:fff}" @click="updateRecord" class="bb1">下一题</button>
 			<button style="margin: 50upx;" @click="over" :disabled="zt">结束游戏</button>
 		</view>
+		
 	</view>
 </template>
 <script>
@@ -126,6 +127,50 @@
 				const user = localStorage.getItem("userInfo");
 				that.userInfo = JSON.parse(user);
 			},
+			
+			//结束游戏 修改用户
+			updateRecord() {
+				const that = this;
+				if (that.answer != that.getTopicList.Answer || that.answer == '' || that.answer == null) {
+					uni.request({
+						url: api.UpdateRecord,
+						method: 'GET',
+						data: {
+							"AccountName": that.name,
+							'Integral': that.n_integral,
+							'EndTime': that.createTime,
+							'RoomID': that.roomId
+						},
+						success: res => {
+							if (res.data.Code == 200) {
+								alert('答案错误！' + that.n_integral + '积分')
+							}
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+				} else if (that.answer == that.getTopicList.Answer) {
+					uni.request({
+						url: api.UpdateRecord,
+						method: 'GET',
+						data: {
+							"AccountName": that.name,
+							'Integral': that.p_integral,
+							'EndTime': that.createTime,
+							'RoomID': that.roomId
+						},
+						success: res => {
+							if (res.data.Code == 200) {
+								alert('答案正确！+' + that.p_integral + '积分')
+							}
+						},
+						fail: () => {},
+						complete: () => {}
+					});
+			
+				}
+			
+			},
 
 			//创建WebSocket连接
 			initWebSocket() {
@@ -137,12 +182,30 @@
 			},
 			//打开连接
 			webSocketClientOnopen() {
-				console.log('打开成功')
+				console.log('打开成功');
+			/*
+				var  Record= {
+					'AccountName': this.token,
+					'Integral': '-2',
+					'CreateTime' : '2019-04-27 16:58:35.000',
+					'RoomID' : '11:49:07'
+				};
+				var Record1 = JSON.stringify(Record);
+			
+				console.log(Record1)
+				
+				let Precord = {
+					'Message' : Record1,
+					'Tag' : 'ac',
+					'ActionMethod' : 'Record.AddRecord'
+				};
+				this.websocketsend(Precord);
+				*/
 			},
 			//数据回收
 			webSocketClientOnmessage(e) {
 				var data = JSON.parse(e.data);
-
+				console.log(data)
 			},
 
 			websocketsend(Data) { //发送数据
