@@ -19,22 +19,19 @@
 			</view>
 		</view>
 		<!-- 用户的数据 -->
-
-
 		<!-- 选项 -->
 		<view class="list-content" style="margin-top: 15upx;">
 
 			<view class="list">
 				<view class="li">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="text">游戏记录</view>
+					<view class="text"><navigator url="../record/record">游戏记录</navigator></view>
 				</view>
 			</view>
 			<view class="list">
 				<view class="li noborder">
 					<image class="icon" src="../../static/logo.png"></image>
 					<view class="text">进入游戏</view>
-
 				</view>
 			</view>
 		</view>
@@ -61,7 +58,7 @@
 		methods: {
 			selectUserInfo() {
 				const that=this
-				const userInfo = sessionStorage.getItem("userInfo");
+				const userInfo = localStorage.getItem("userInfo");
 				that.user=JSON.parse(userInfo);
 			}
 		}

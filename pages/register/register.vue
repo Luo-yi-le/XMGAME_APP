@@ -86,7 +86,6 @@
 				var data = JSON.parse(e.data);
 				data= JSON.parse(data.Message);
 				
-				
 				if(data.Code==200){
 					//使用uni-app中的暂存 确保第二次免登
 					uni.setStorageSync('userInfo',JSON.stringify(data.Data))
