@@ -103,7 +103,7 @@
 
 			//当时间读完后自动结算
 			autopilotRecord() {
-
+ 
 			},
 			//获取系统的当前时间
 			getSystemTime() {

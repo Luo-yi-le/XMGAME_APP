@@ -45,7 +45,7 @@
 				</view>
 			</view>
 		</view>
-<!-- //;ll;oook -->
+		<!-- //;ll;oook -->
 	</view>
 </template>
 
@@ -74,6 +74,9 @@
 					url: '../register/register'
 				})
 			},
+
+			//用户操作（测试）
+			// #ifdef 
 			//登陆
 			login() {
 				//调用WebSocket（只有登陆和注册需要用户操作点击，其他的视情况而定）
@@ -89,6 +92,8 @@
 				this.user.accountName = this.test_loginId2
 				this.user.password = this.test_pwd2
 			},
+			
+			// #endif
 			//打开控制台
 			openConsole() {
 				var el = new Image();
@@ -96,16 +101,9 @@
 					get: function() {}
 				});
 				console.log('%cl', el);
-
 			},
-			//创建WebSocket连接
-			initWebSocket() {
-				websock = new WebSocket(api.wsuri);
-				websock.onopen = this.webSocketClientOnopen //打开
-				websock.onmessage = this.webSocketClientOnmessage //接收信息
-				websock.onerror = this.webSocketClientOnerror //错误
-				websock.onclose = this.webSocketClientOnclose //关闭
-			},
+			//发送通信并回收
+			// #ifdef 
 			//打开连接
 			webSocketClientOnopen() {
 				console.log('打开成功')
@@ -121,6 +119,7 @@
 				};
 				this.websocketsend(actions);
 			},
+
 			//数据回收
 			webSocketClientOnmessage(e) {
 				var data = JSON.parse(e.data);
@@ -128,9 +127,7 @@
 				if (res.Code == 200) {
 					console.log(res.Data);
 					//使用uni-app中的暂存 确保第二次免登
-						localStorage.setItem('userInfo',JSON.stringify( res.Data))
-							
-					
+					localStorage.setItem('userInfo', JSON.stringify(res.Data))
 					//提示用户登陆成功
 					uni.showToast({
 						title: res.Data.AccountName + res.Message,
@@ -146,6 +143,18 @@
 					alert('请检查账号密码是否正确！')
 				}
 			},
+			// #endif
+			
+			//连接通信
+			// #ifdef 
+			//创建WebSocket连接
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
+			},
 
 			websocketsend(Data) { //发送数据
 				console.log('数据发送：' + JSON.stringify(Data));
@@ -160,8 +169,10 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
+			// #endif
+
 		},
-		
+
 		created() {
 			this.openConsole();
 		}

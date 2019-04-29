@@ -47,6 +47,8 @@
 					url: '../game/game'
 				});
 			},
+			//用户操作
+			// #ifdef 
 			setHeight() {
 				const that = this;
 				var width = document.getElementsByClassName("getWidth"); //这里的到的是一个数组
@@ -59,10 +61,13 @@
 				})
 			},
 			selectUserInfo() {
-				 const that = this
-				 that.user=JSON.parse( localStorage.getItem('userInfo'))
+				const that = this
+				that.user = JSON.parse(localStorage.getItem('userInfo'))
 			},
+			// #endif
 
+			//通信
+			// #ifdef 
 			//创建WebSocket连接
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -78,9 +83,6 @@
 					"Tag": "c"
 				};
 				this.websocketsend(entity);
-
-				
-
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				const redata = JSON.parse(e.data);
@@ -96,6 +98,8 @@
 			webSocketClientOnerror() { //连接建立失败重连
 				initWebSocket();
 			},
+			// #endif
+
 		},
 		created() {
 			this.initWebSocket();
@@ -103,7 +107,7 @@
 		onShow() {
 			this.selectUserInfo();
 		},
-		
+
 	}
 </script>
 

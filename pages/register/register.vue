@@ -58,14 +58,9 @@
 			
 				this.initWebSocket();
 			},
-			//创建WebSocket连接
-			initWebSocket() {
-				websock = new WebSocket(api.wsuri);
-				websock.onopen = this.webSocketClientOnopen //打开
-				websock.onmessage = this.webSocketClientOnmessage //接收信息
-				websock.onerror = this.webSocketClientOnerror //错误
-				websock.onclose = this.webSocketClientOnclose //关闭
-			},
+			
+			//打开通信 并接受数据
+			// #ifdef 
 			//打开连接
 			webSocketClientOnopen() {
 				console.log('打开成功')
@@ -104,6 +99,10 @@
 					alert('请检查账号步骤是否正确！')
 				}
 			},
+			// #endif
+			
+			//通信
+			// #ifdef 
 			websocketsend(Data) { //发送数据
 				console.log('数据发送：' + JSON.stringify(Data));
 				websock.send(JSON.stringify(Data));
@@ -117,6 +116,16 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
+			//创建WebSocket连接
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
+			},
+			// #endif
+			
 		},
 		created() {
 			

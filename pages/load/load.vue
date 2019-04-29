@@ -57,32 +57,11 @@
 					url: '../index/index'
 				})
 			},
-			//创建WebSocket连接
-			initWebSocket() {
-				websock = new WebSocket(api.wsuri);
-				websock.onopen = this.webSocketClientOnopen //打开
-				websock.onmessage = this.webSocketClientOnmessage //接收信息
-				websock.onerror = this.webSocketClientOnerror //错误
-				websock.onclose = this.webSocketClientOnclose //关闭
-			},
-			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
-				let entity = {
-					"FromUser": this.token,
-					"Tag": "c"
-				};
-				this.websocketsend(entity);
-
-				//进入房间
-				var c = {
-					"FromUser": this.token,
-					"Tag": "i",
-					"RoomID": this.roomID == '' ? "" : this.roomID
-				};
-				this.websocketsend(c);
-			},
+			
 			
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
+				console.log('数据：'+JSON.stringify(data))
 				if (data.Tag == "r") {
 					var localgame = localStorage.getItem("game");
 					uni.showToast({
@@ -100,16 +79,46 @@
 				localStorage.setItem('game', JSON.stringify(data));
 
 			},
+			
+			//通信
+			// #ifdef 
+			//创建WebSocket连接
+			initWebSocket() {
+				websock = new WebSocket(api.wsuri);
+				websock.onopen = this.webSocketClientOnopen //打开
+				websock.onmessage = this.webSocketClientOnmessage //接收信息
+				websock.onerror = this.webSocketClientOnerror //错误
+				websock.onclose = this.webSocketClientOnclose //关闭
+			},
+			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
+				let entity = {
+					"FromUser": this.token,
+					"Tag": "c"
+				};
+				this.websocketsend(entity);
+			
+				//进入房间
+				var c = {
+					"FromUser": this.token,
+					"Tag": "i",
+					"RoomID": this.roomID == '' ? "" : this.roomID
+				};
+				this.websocketsend(c);
+			},
 			websocketsend(Data) { //数据发送
 				websock.send(JSON.stringify(Data));
 			},
-
+			
 			webSocketClientOnclose(e) { //关闭
 			},
 			webSocketClientOnerror() { //连接建立失败重连
 				this.initWebSocket();
 			},
-			//提示用户进入房间name
+			// #endif
+			
+			//用户操作
+			// #ifdef 
+						//提示用户进入房间name
 			showUser() {
 				var game1 = localStorage.getItem("game");
 				this.game = JSON.parse(game1);
@@ -135,6 +144,7 @@
 				const that = this
 				that.user = JSON.parse(localStorage.getItem('userInfo'))
 			},
+			// #endif
 		},
 		onLoad: function(option) {
 			this.token = option.token

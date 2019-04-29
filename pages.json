@@ -75,7 +75,8 @@
 				"navigationBarTitleText": "单条记录"
 			}
 		}
-	],
+	    
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

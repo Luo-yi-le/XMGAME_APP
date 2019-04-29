@@ -51,3 +51,14 @@
 		padding: 20upx;
 		color: blue;
 	}
+	
+	/* 罗贻乐 updataTime:2019-4-29 18:42 修改为手风琴效果 */
+	.list:active {
+		background-color: #eeeeee;
+	}
+	
+	.list {
+		width: 100%;
+		border-bottom: 4upx solid #f1f1f1;
+		background: #fff;
+	}
