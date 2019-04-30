@@ -1,39 +1,35 @@
 <template>
 	<view class="play_view">
 		<view class="zhu">
-
-			<view class="play_view1">
-				{{themeId}} / {{index_Count}}
-			</view>
+			<view class="play_view1">{{ TopIndex + 1 }} / {{ getTopicList.length }}</view>
 			<view class="play_view2"><text class="play_text">玩家</text></view>
 			<view>
 				<image src="../../static/img/body.png" class="play_img" />
-				<view style="play_view3">积分:{{userInfo.Integral}}</view>
+				<view style="play_view3">积分:{{ userInfo.Integral }}</view>
 			</view>
-
 		</view>
 		<view class="play_view4">
 			<view>题目类型</view>
 			<view>
-				<view class="play_view5"> </view>
+				<view class="play_view5">{{ getTopicList[TopIndex].GenreName }}</view>
 			</view>
 
 			<view class="play_view6">
-				<label class="play_view7">{{count}}</label>
+				<label class="play_view7">{{ count }}</label>
 			</view>
 
 			<view class="play_view8">
 				<view>问题：</view>
-				<view class="play_view9">{{getTopicList.Theme}}=?</view>
+				<view class="play_view9">{{ getTopicList[TopIndex].Topic }}=？</view>
 			</view>
 			<view class="play_view10">
 				<view>答案：</view>
 				<input type="text" placeholder="输入答案" style="border-bottom: 10upx;" v-model="answer" />
 			</view>
-			<button :style="{display:fff}" @click="updateRecord" class="bb1">下一题</button>
-			<button style="margin: 50upx;" @click="over" :disabled="zt">结束游戏</button>
+			<button :style="{ display: forbid }" @click="updateRecord" class="bb1">下一题</button>
+			<button style="margin: 50upx;" @click="over">结束游戏</button>
 		</view>
-		
+
 	</view>
 </template>
 <script>
@@ -43,14 +39,13 @@
 	export default {
 		data() {
 			return {
+				bingo: 0, //答对的数量
+				TopIndex: 0, //下标
+				integral: 0, //当前所获得的积分
 				count: 10,
 				userInfo: '',
-				themeId: '',
-				theme: '',
-				fff: '',
-				zt: 'true',
-				index_: 0,
-				index_Count: '',
+				forbid: '',
+		
 				getTopicList: [],
 				token: '',
 				roomId: '',
@@ -66,45 +61,43 @@
 			this.roomId = option.roomID;
 			this.token = option.token;
 			console.log(this.roomId)
-			//
-			this.index_Count = this.index_ + 1
-			this.themeId = this.getTopicList.Id;
-			this.theme = this.getTopicList.Theme;
-
-			var second;
-			second = 0; //初始化
-			var millisecond = 0; //毫秒
+			// 实现倒计时功能
 			this.timer = setInterval(() => {
 				this.count = this.count - 1;
 				if (this.count == 0) {
-					clearInterval(this.timer); //停止
-					this.zt = false; //启用结束按钮
-					this.fff = 'none'; //隐藏下一题按钮
+					if (this.getTopicList.length - 1 == this.TopIndex) {
+						this.forbid = 'none'; //隐藏下一题按钮
+						clearInterval(this.timer); //停止
+					} else {
+						this.TopIndex = this.TopIndex + 1;
+						this.count = 10;
+					}
 				}
-				// this.nums = hour+'时'+minute+'分'+second+'秒';
 			}, 1000);
+
 		},
 		methods: {
 			over: function(e) {
-				uni.redirectTo({
-					url: '../over/over?roomId=' + this.roomId + '&token=' + this.token
-				})
-			},
-			test() {
-				i++;
-				if (i == this.index_) {
-					this.zt = false;
-					this.fff = 'none';
-					console.log(i);
+				//
+				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
+					if (this.count > 0) {
+						console.log('答对了');
+						this.bingo = this.bingo + 1;
+						this.integral = thsi.integral + 2;
+
+						console.log('积分:' + this.integral);
+					} else {
+						console.log('超时了！');
+					}
 				}
-				this.theme = this.getTopicList.Theme;
-				this.themeId = this.getTopicList.Id;
+				this.State = 1;
+				this.initWebSocket();
+				uni.redirectTo({
+					url: '../over/over?roomId=' + this.roomId + '&token=' + this.token + '&bingo=' + this.bingo
+				});
 			},
 
-			//当时间读完后自动结算
-			autopilotRecord() {
- 
-			},
+
 			//获取系统的当前时间
 			getSystemTime() {
 				var date = new Date();
@@ -125,49 +118,23 @@
 				const user = localStorage.getItem("userInfo");
 				that.userInfo = JSON.parse(user);
 			},
-			
+
 			//结束游戏 修改用户
 			updateRecord() {
-				const that = this;
-				if (that.answer != that.getTopicList.Answer || that.answer == '' || that.answer == null) {
-					uni.request({
-						url: api.UpdateRecord,
-						method: 'GET',
-						data: {
-							"AccountName": that.name,
-							'Integral': that.n_integral,
-							'EndTime': that.createTime,
-							'RoomID': that.roomId
-						},
-						success: res => {
-							if (res.data.Code == 200) {
-								alert('答案错误！' + that.n_integral + '积分')
-							}
-						},
-						fail: () => {},
-						complete: () => {}
-					});
-				} else if (that.answer == that.getTopicList.Answer) {
-					uni.request({
-						url: api.UpdateRecord,
-						method: 'GET',
-						data: {
-							"AccountName": that.name,
-							'Integral': that.p_integral,
-							'EndTime': that.createTime,
-							'RoomID': that.roomId
-						},
-						success: res => {
-							if (res.data.Code == 200) {
-								alert('答案正确！+' + that.p_integral + '积分')
-							}
-						},
-						fail: () => {},
-						complete: () => {}
-					});
-			
+				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
+					console.log('答对了');
+					this.bingo = this.bingo + 1;
+					this.integral = this.integral + 2;
+					console.log("积分" + this.integral)
+					//this.bingo;
 				}
-			
+				this.answer = '';
+				this.TopIndex = this.TopIndex + 1;
+				this.count = 10;
+
+				if (this.getTopicList.length - 1 == this.TopIndex) {
+					this.forbid = 'none'; //隐藏下一题按钮
+				}
 			},
 
 			//周少鸿 4/30 
@@ -184,7 +151,7 @@
 				websock.onerror = this.webSocketClientOnerror //错误
 				websock.onclose = this.webSocketClientOnclose //关闭
 			},
-			
+
 			//周少鸿 4/30 
 			//打开连接
 			webSocketClientOnopen() {
@@ -204,21 +171,45 @@
 				let Precord = {
 					'Message': Record1,
 					'Tag': 'ac',
-					'ActionMethod': 'Record.AddRecord'
+					'ActionMethod': 'RecordBLL.AddRecord'
 				};
 
 				this.websocketsend(Precord);
 
+				//获取游戏数据
+				let topicList = {
+					Tag: 'ac',
+					ActionMethod: 'QuestionBLL.GetQuestions'
+				};
+				this.websocketsend(topicList);
+
 			},
 			//数据回收
 			webSocketClientOnmessage(e) {
+
 				var data = JSON.parse(e.data);
 				console.log(data)
+				var strData = typeof data == 'string' ? JSON.parse(data) : data;
+				console.log('strData:' + JSON.stringify(strData));
+				if (strData.ActionMethod == 'RecordBLL.AddRecord') {
+					console.log("插入数据成功" + data);
+				} else if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
+					//var data = JSON.parse(e.data);
+					var data1 = JSON.parse(data.Message);
+					console.log(data1.Data);
+					if (data1.Code == 200) {
+						//把数据赋值给当前定义数组
+						this.getTopicList = data1.Data;
+						console.log('题目的长度：' + this.getTopicList.length);
+					}
+				}
 			},
 
 			websocketsend(Data) { //发送数据
 				console.log('数据发送：' + JSON.stringify(Data));
 				websock.send(JSON.stringify(Data));
+
+
 			},
 			//重连信息
 			webSocketClientOnerror(e) {

@@ -96,7 +96,7 @@
 			},
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
 				let entity = {
-					"Message":"{'RoomID':'16:10:48'}",
+					"Message":{'RoomID':this.roomId},
 					"Tag":"ac",
 					"ActionMethod": "RecordBLL.GetRecords"
 				};
