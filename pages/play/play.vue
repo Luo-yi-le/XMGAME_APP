@@ -26,7 +26,7 @@
 				<view>答案：</view>
 				<input type="text" placeholder="输入答案" style="border-bottom: 10upx;" v-model="answer" />
 			</view>
-			<button :style="{ display: forbid }" @click="updateRecord" class="bb1">下一题</button>
+			<button :style="{ display: forbid }" @click="isRight" class="bb1">下一题</button>
 			<button style="margin: 50upx;" @click="over">结束游戏</button>
 		</view>
 
@@ -45,7 +45,7 @@
 				count: 10,
 				userInfo: '',
 				forbid: '',
-		
+
 				getTopicList: [],
 				token: '',
 				roomId: '',
@@ -54,6 +54,7 @@
 				answer: '', //获取用户的答案
 				n_integral: -20,
 				p_integral: 20,
+				Record:'',//获取插入数据
 			}
 		},
 		onLoad: function(option) {
@@ -119,15 +120,33 @@
 				that.userInfo = JSON.parse(user);
 			},
 
-			//结束游戏 修改用户
-			updateRecord() {
-				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
-					console.log('答对了');
-					this.bingo = this.bingo + 1;
-					this.integral = this.integral + 2;
-					console.log("积分" + this.integral)
-					//this.bingo;
+			//用户答题 罗贻乐
+			isRight() {
+				// if (this.getTopicList[this.TopIndex].Answer == this.answer) {
+				// 	console.log('答对了');
+				// 	this.bingo = this.bingo + 1;
+				// 	this.integral = this.integral + 2;
+				// 	console.log("积分" + this.integral)
+				// 	
+				// 	
+				// }
+				var id = this.getTopicList[this.TopIndex].ID;
+				console.log('id:' + id)
+				const strAnswer = {
+					"AccountName": this.token,
+					"QuestionID": id,
+					'Reply': this.answer,
+					"RecordID": this.Record.ID,
 				}
+				const jsonAnswer = JSON.stringify(strAnswer);
+				const action = {
+					"Message": jsonAnswer,
+					"Tag": "ac",
+					"ActionMethod": "RecordQuestionBLL.IsRight"
+				}
+				console.log(JSON.stringify(action))
+				this.websocketsend(action)
+
 				this.answer = '';
 				this.TopIndex = this.TopIndex + 1;
 				this.count = 10;
@@ -176,7 +195,7 @@
 
 				this.websocketsend(Precord);
 
-				//获取游戏数据
+				//获取游戏题目
 				let topicList = {
 					Tag: 'ac',
 					ActionMethod: 'QuestionBLL.GetQuestions'
@@ -186,21 +205,31 @@
 			},
 			//数据回收
 			webSocketClientOnmessage(e) {
-
 				var data = JSON.parse(e.data);
-				console.log(data)
 				var strData = typeof data == 'string' ? JSON.parse(data) : data;
-				console.log('strData:' + JSON.stringify(strData));
 				if (strData.ActionMethod == 'RecordBLL.AddRecord') {
-					console.log("插入数据成功" + data);
+					var res = JSON.parse(strData.Message);
+					console.log('数据成功2：' + JSON.stringify(res))
+					var objData = typeof res == 'object' ? res : res
+					if (objData.Code === 200) {
+						this.Record = objData.Data;
+						console.log('数据成功1:' + JSON.stringify(this.Record));
+					}
+				
 				} else if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
-					//var data = JSON.parse(e.data);
 					var data1 = JSON.parse(data.Message);
 					console.log(data1.Data);
 					if (data1.Code == 200) {
 						//把数据赋值给当前定义数组
 						this.getTopicList = data1.Data;
-						console.log('题目的长度：' + this.getTopicList.length);
+					}
+				} else if (strData.ActionMethod == "RecordQuestionBLL.IsRight") {
+					var res = JSON.parse(strData.Message);
+					console.log('模拟答题：' + JSON.stringify(res))
+					var objData = typeof res == 'object' ? res : res
+					if (objData.Code === 200) {
+						this.Answer = objData.Data;
+						console.log('模拟答题:' + this.Answer);
 					}
 				}
 			},

@@ -64,12 +64,12 @@
 				roomId: '', //获取房间号
 				name: '', //获取用户名称
 				getRecordsList: [], //排行榜的集合
-				
-				FracRest:'', //结果
-				FractionA:'5', //模拟分数 A
-				FractionB:'1', //模拟分数 B
-				ResultA:'胜利' ,//胜负
-				ResultB:'失败' //胜负
+
+				FracRest: '', //结果
+				FractionA: '5', //模拟分数 A
+				FractionB: '1', //模拟分数 B
+				ResultA: '胜利', //胜负
+				ResultB: '失败' //胜负
 			}
 		},
 		methods: {
@@ -85,7 +85,15 @@
 			},
 			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
-
+				let entity = {
+					"Message": {
+						'RoomID': this.roomId
+					},
+					"Tag": "ac",
+					"ActionMethod": "RecordBLL.GetRecords"
+				};
+				console.log(entity)
+				this.websocketsend(entity);
 			},
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -95,19 +103,15 @@
 				websock.onclose = this.webSocketClientOnclose //关闭
 			},
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
-				let entity = {
-					"Message":{'RoomID':this.roomId},
-					"Tag":"ac",
-					"ActionMethod": "RecordBLL.GetRecords"
-				};
-				this.websocketsend(entity);
+
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
-				var strData=JSON.parse(data.Message);
+				var strData = JSON.parse(data.Message);
 				console.log(strData)
-				if(strData.Code==200){
-					this.getRecordsList=strData.Data;
+				if (strData.Code == 200) {
+					this.getRecordsList = strData.Data;
+					console.log('getRecordsList:'+strData)
 				}
 			},
 			websocketsend(Data) { //数据发送
@@ -126,7 +130,10 @@
 		},
 		created() {
 			this.initWebSocket();
-			this.GetRecords();
+			setTimeout(()=>{
+				this.GetRecords();
+			},500)
+			
 		},
 		//排序
 		computed: {

@@ -53,9 +53,11 @@
 		},
 		methods: {
 			onover: function(e) {
+			  websock.onclose()//关闭websocket
 				uni.switchTab({
 					url: '../index/index'
 				})
+				
 			},
 			
 			
@@ -63,7 +65,6 @@
 				var data = JSON.parse(e.data);
 				console.log('数据：'+JSON.stringify(data))
 				if (data.Tag == "r") {
-					var localgame = localStorage.getItem("game");
 					uni.showToast({
 						title: data.Message + ': ' + data.RoomID,
 						duration: 2000
@@ -110,6 +111,7 @@
 			},
 			
 			webSocketClientOnclose(e) { //关闭
+			console.log("关闭");
 			},
 			webSocketClientOnerror() { //连接建立失败重连
 				this.initWebSocket();
