@@ -3,7 +3,8 @@
 	<view id="box">
 		<view class="square">
 			<view class="R_ftext">
-				<text class="R_text">胜利</text>
+				<text class="R_text" v-if="FractionA>FractionB"> {{ResultA}}</text>
+				<text class="R_text" v-else> {{ResultB}}</text>
 			</view>
 
 			<view>
@@ -54,6 +55,7 @@
 </template>
 
 <script>
+	//周少鸿 4/30 比赛结果处理
 	var websock;
 	import * as api from '../../static/js/api.js'
 	export default {
@@ -62,6 +64,12 @@
 				roomId: '', //获取房间号
 				name: '', //获取用户名称
 				getRecordsList: [], //排行榜的集合
+				
+				FracRest:'', //结果
+				FractionA:'5', //模拟分数 A
+				FractionB:'1', //模拟分数 B
+				ResultA:'胜利' ,//胜负
+				ResultB:'失败' //胜负
 			}
 		},
 		methods: {

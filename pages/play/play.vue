@@ -170,6 +170,12 @@
 			
 			},
 
+			//周少鸿 4/30 
+			//获取房间的ID
+			getGameRoomID() {
+				var game1 = localStorage.getItem("game");
+				this.game = JSON.parse(game1);
+			},
 			//创建WebSocket连接
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -178,35 +184,30 @@
 				websock.onerror = this.webSocketClientOnerror //错误
 				websock.onclose = this.webSocketClientOnclose //关闭
 			},
+			
+			//周少鸿 4/30 
 			//打开连接
 			webSocketClientOnopen() {
 
 				console.log('打开成功');
-			/*
-				var  Record= {
+
+				var Record = {
 					'AccountName': this.token,
-					'Integral': '-2',
-					'CreateTime' : '2019-04-27 16:58:35.000',
-					'RoomID' : '11:49:07'
+					'Integral': this.n_integral,
+					'CreateTime': this.createTime,
+					'EndTime': this.recordEndTime,
+					'RoomID': this.game.RoomID
 				};
 				var Record1 = JSON.stringify(Record);
-			
-				console.log(Record1)
-				
-				let Precord = {
-					'Message' : Record1,
-					'Tag' : 'ac',
-					'ActionMethod' : 'Record.AddRecord'
-				};
-				this.websocketsend(Precord);
-				*/
 
-				console.log('打开成功')
-				const topicList={
-					"Tag":"ac",
-					"ActionMethod": "QuestionBLL.GetQuestions"
-				}
-				this.websocketsend(topicList)
+
+				let Precord = {
+					'Message': Record1,
+					'Tag': 'ac',
+					'ActionMethod': 'Record.AddRecord'
+				};
+
+				this.websocketsend(Precord);
 
 			},
 			//数据回收
@@ -230,6 +231,7 @@
 			},
 		},
 		created() {
+			this.getGameRoomID(); //获取房间ID
 			this.initWebSocket();
 			this.getSystemTime();
 			this.selectUserInfo();

@@ -124,7 +124,7 @@
 				this.game = JSON.parse(game1);
 				console.log(this.game.FromUser)
 				uni.showToast({
-					title: "232323;" + this.game.Message + ': ' + this.game.RoomID,
+					title:  this.game.Message + ': ' + this.game.RoomID,
 					duration: 3000
 				});
 			},
