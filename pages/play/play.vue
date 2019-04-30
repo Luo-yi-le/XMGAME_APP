@@ -45,7 +45,6 @@
 				count: 10,
 				userInfo: '',
 				forbid: '',
-
 				getTopicList: [],
 				token: '',
 				roomId: '',
@@ -53,8 +52,7 @@
 				recordEndTime: '', //创建游戏距离需要带的时间
 				answer: '', //获取用户的答案
 				n_integral: -20,
-				p_integral: 20,
-				Record:'',//获取插入数据
+				RecordList:'',//获取插入数据
 			}
 		},
 		onLoad: function(option) {
@@ -136,7 +134,7 @@
 					"AccountName": this.token,
 					"QuestionID": id,
 					'Reply': this.answer,
-					"RecordID": this.Record.ID,
+					"RecordID": this.RecordList.ID,
 				}
 				const jsonAnswer = JSON.stringify(strAnswer);
 				const action = {
@@ -212,10 +210,9 @@
 					console.log('数据成功2：' + JSON.stringify(res))
 					var objData = typeof res == 'object' ? res : res
 					if (objData.Code === 200) {
-						this.Record = objData.Data;
-						console.log('数据成功1:' + JSON.stringify(this.Record));
+						this.RecordList = objData.Data;
+						console.log('数据成功1:' + JSON.stringify(this.RecordList));
 					}
-				
 				} else if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
 					var data1 = JSON.parse(data.Message);
 					console.log(data1.Data);

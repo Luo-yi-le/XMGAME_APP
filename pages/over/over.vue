@@ -85,10 +85,12 @@
 			},
 			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
+				const roomid={
+					'RoomID': this.roomId
+				}
+				const jsogRoomid=JSON.stringify(roomid)
 				let entity = {
-					"Message": {
-						'RoomID': this.roomId
-					},
+					"Message":jsogRoomid,
 					"Tag": "ac",
 					"ActionMethod": "RecordBLL.GetRecords"
 				};
@@ -103,7 +105,20 @@
 				websock.onclose = this.webSocketClientOnclose //关闭
 			},
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
-
+				console.log('打开成功')
+				var ROOM = {
+					'RoomID': this.roomId
+				}
+				console.log(ROOM+"ROOM");
+				//记得转换为字符串"Message"
+				var ROOM2 = JSON.stringify(ROOM);
+				console.log(ROOM2+"ROOM2");
+				let actions = {
+					"Message":ROOM2,
+					"Tag": "ac",
+					'ActionMethod': 'RecordQuestionBLL.GetByRoomID'
+				};
+				this.websocketsend(actions);
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);

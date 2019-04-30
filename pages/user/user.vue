@@ -133,9 +133,7 @@
 					'Reply':'1',
 					"RecordID":1090,
 				}
-				//{"Message":"{"QuestionID":"xx","AccountName":"Token","Reply":"用户答案","RecordID":"记录ID"}","Tag":"ac","ActionMethod": "RecordQuestionBLL.IsRight"}
 				const jsonAnswer = JSON.stringify(strAnswer);
-				
 				const action = {
 					"Message": jsonAnswer,
 					"Tag": "ac",

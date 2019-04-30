@@ -53,17 +53,16 @@
 		},
 		methods: {
 			onover: function(e) {
-			  websock.onclose()//关闭websocket
+				//websock.onclose() //关闭websocket
 				uni.switchTab({
 					url: '../index/index'
 				})
-				
+
 			},
-			
-			
 			webSocketClientOnmessage(e) { //数据接收
+				//heartCheck.reset().start(); //设置心跳
 				var data = JSON.parse(e.data);
-				console.log('数据：'+JSON.stringify(data))
+				console.log('数据：' + JSON.stringify(data))
 				if (data.Tag == "r") {
 					uni.showToast({
 						title: data.Message + ': ' + data.RoomID,
@@ -80,7 +79,7 @@
 				localStorage.setItem('game', JSON.stringify(data));
 
 			},
-			
+
 			//通信
 			// #ifdef 
 			//创建WebSocket连接
@@ -97,7 +96,7 @@
 					"Tag": "c"
 				};
 				this.websocketsend(entity);
-			
+
 				//进入房间
 				var c = {
 					"FromUser": this.token,
@@ -109,24 +108,24 @@
 			websocketsend(Data) { //数据发送
 				websock.send(JSON.stringify(Data));
 			},
-			
+
 			webSocketClientOnclose(e) { //关闭
-			console.log("关闭");
+				console.log("关闭");
 			},
 			webSocketClientOnerror() { //连接建立失败重连
 				this.initWebSocket();
 			},
 			// #endif
-			
+
 			//用户操作
 			// #ifdef 
-						//提示用户进入房间name
+			//提示用户进入房间name
 			showUser() {
 				var game1 = localStorage.getItem("game");
 				this.game = JSON.parse(game1);
 				console.log(this.game.FromUser)
 				uni.showToast({
-					title:  this.game.Message + ': ' + this.game.RoomID,
+					title: this.game.Message + ': ' + this.game.RoomID,
 					duration: 3000
 				});
 			},
@@ -139,7 +138,7 @@
 					'RoomID': this.game.RoomID
 				};
 				this.websocketsend(readyGame);
-				
+
 			},
 			//获取用户信息
 			selectUserInfo() {
