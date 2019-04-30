@@ -49,6 +49,10 @@
 				roomID: '',
 				user: '',
 				game: '',
+				createTime: '', //创建时间 or 结算时间
+				recordEndTime: '', //创建游戏距离需要带的时间
+				n_integral: -20,
+				RecordList: ''
 			}
 		},
 		methods: {
@@ -71,11 +75,52 @@
 				} else if (data.Tag == "i") {
 					this.roomID = data.RoomID
 				} else if (data.Tag == 'b') {
+					
+					
+// 					setTimeout(() => {
+						var Record = {
+							'AccountName': this.token,
+							'Integral': this.n_integral,
+							'CreateTime': this.createTime,
+							'EndTime': this.recordEndTime,
+							'RoomID': this.game.RoomID
+						};
+						var Record1 = JSON.stringify(Record);
+						console.log(Record1);
+						let Precord = {
+							'Message': Record1,
+							'Tag': 'ac',
+							'ActionMethod':'RecordBLL.AddRecord'
+						};
+
+						this.websocketsend(Precord);
+// 						var strData = typeof data == 'string' ? JSON.parse(data) : data;
+// 						setTimeout(() => {
+// 							console.log('strData:'+JSON.stringify(strData))
+// 							if (strData.ActionMethod == 'RecordBLL.AddRecord') {
+// 								var res = JSON.parse(strData.Message);
+// 								console.log('数据成功2：' + JSON.stringify(res))
+// 								var objData = typeof res == 'object' ? res : res
+// 								if (objData.Code === 200) {
+// 									api.RecordList = objData.Data;
+// 									console.log('数据成功1:' + JSON.stringify(api.RecordList));
+// 									uni.reLaunch({
+// 										url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
+// 									})
+// 								}
+// 							}
+// 						}, 500)
+// 
+// 					}, 500)
 					//跳到开始游戏的界面 开始游戏的功能若没有成功  该连接会报错
-					uni.reLaunch({
-						url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
-					})
-				}
+					
+		}else if(data.Tag=='ac'&&data.ActionMethod){
+			console.log('--------------------------------');
+			uni.reLaunch({
+				url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
+		});		
+	 
+		}
 				localStorage.setItem('game', JSON.stringify(data));
 
 			},
@@ -145,6 +190,22 @@
 				const that = this
 				that.user = JSON.parse(localStorage.getItem('userInfo'))
 			},
+
+			//获取系统的当前时间
+			getSystemTime() {
+				var date = new Date();
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+				var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+				var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+				var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+				var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+				var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+				var t = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + (seconds + parseInt(10));
+				this.recordEndTime = t;
+				this.createTime = time
+				return this.createTime;
+			},
 			// #endif
 		},
 		onLoad: function(option) {
@@ -152,7 +213,8 @@
 			console.log(this.token);
 		},
 		created() {
-			this.selectUserInfo()
+			this.selectUserInfo();
+			this.getSystemTime();
 			setTimeout(() => {
 				this.showUser();
 			}, 500)

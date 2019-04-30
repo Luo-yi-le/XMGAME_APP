@@ -48,10 +48,9 @@
 				getTopicList: [],
 				token: '',
 				roomId: '',
-				createTime: '', //创建时间 or 结算时间
-				recordEndTime: '', //创建游戏距离需要带的时间
+				
 				answer: '', //获取用户的答案
-				n_integral: -20,
+
 				RecordList:'',//获取插入数据
 			}
 		},
@@ -82,36 +81,18 @@
 					if (this.count > 0) {
 						console.log('答对了');
 						this.bingo = this.bingo + 1;
-						this.integral = thsi.integral + 2;
+						this.integral = this.integral + 2;
 
 						console.log('积分:' + this.integral);
 					} else {
 						console.log('超时了！');
 					}
 				}
-				this.State = 1;
-				this.initWebSocket();
 				uni.redirectTo({
 					url: '../over/over?roomId=' + this.roomId + '&token=' + this.token + '&bingo=' + this.bingo
 				});
 			},
 
-
-			//获取系统的当前时间
-			getSystemTime() {
-				var date = new Date();
-				var year = date.getFullYear();
-				var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-				var day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-				var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-				var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-				var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-				var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
-				var t = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + (seconds + parseInt(10));
-				this.recordEndTime = t;
-				this.createTime = time
-				return this.createTime;
-			},
 			selectUserInfo() {
 				const that = this;
 				const user = localStorage.getItem("userInfo");
@@ -134,7 +115,7 @@
 					"AccountName": this.token,
 					"QuestionID": id,
 					'Reply': this.answer,
-					"RecordID": this.RecordList.ID,
+					"RecordID": api.RecordList.ID,
 				}
 				const jsonAnswer = JSON.stringify(strAnswer);
 				const action = {
@@ -172,27 +153,8 @@
 			//周少鸿 4/30 
 			//打开连接
 			webSocketClientOnopen() {
-
 				console.log('打开成功');
-
-				var Record = {
-					'AccountName': this.token,
-					'Integral': this.n_integral,
-					'CreateTime': this.createTime,
-					'EndTime': this.recordEndTime,
-					'RoomID': this.game.RoomID
-				};
-				var Record1 = JSON.stringify(Record);
-
-
-				let Precord = {
-					'Message': Record1,
-					'Tag': 'ac',
-					'ActionMethod': 'RecordBLL.AddRecord'
-				};
-
-				this.websocketsend(Precord);
-
+				
 				//获取游戏题目
 				let topicList = {
 					Tag: 'ac',
@@ -205,15 +167,7 @@
 			webSocketClientOnmessage(e) {
 				var data = JSON.parse(e.data);
 				var strData = typeof data == 'string' ? JSON.parse(data) : data;
-				if (strData.ActionMethod == 'RecordBLL.AddRecord') {
-					var res = JSON.parse(strData.Message);
-					console.log('数据成功2：' + JSON.stringify(res))
-					var objData = typeof res == 'object' ? res : res
-					if (objData.Code === 200) {
-						this.RecordList = objData.Data;
-						console.log('数据成功1:' + JSON.stringify(this.RecordList));
-					}
-				} else if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
+				 if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
 					var data1 = JSON.parse(data.Message);
 					console.log(data1.Data);
 					if (data1.Code == 200) {
@@ -250,7 +204,7 @@
 		created() {
 			this.getGameRoomID(); //获取房间ID
 			this.initWebSocket();
-			this.getSystemTime();
+
 			this.selectUserInfo();
 		}
 	}
