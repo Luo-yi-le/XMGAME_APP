@@ -64,7 +64,6 @@
 				roomId: '', //获取房间号
 				name: '', //获取用户名称
 				getRecordsList: [], //排行榜的集合
-
 				FracRest: '', //结果
 				FractionA: '5', //模拟分数 A
 				FractionB: '1', //模拟分数 B
@@ -92,9 +91,9 @@
 				let entity = {
 					"Message":jsogRoomid,
 					"Tag": "ac",
-					"ActionMethod": "RecordBLL.GetRecords"
+					"ActionMethod": "RecordQuestionBLL.GetByRoomID"
 				};
-				console.log(entity)
+				//console.log(entity)
 				this.websocketsend(entity);
 			},
 			initWebSocket() {
@@ -106,19 +105,19 @@
 			},
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
 				console.log('打开成功')
-				var ROOM = {
-					'RoomID': this.roomId
-				}
-				console.log(ROOM+"ROOM");
-				//记得转换为字符串"Message"
-				var ROOM2 = JSON.stringify(ROOM);
-				console.log(ROOM2+"ROOM2");
-				let actions = {
-					"Message":ROOM2,
-					"Tag": "ac",
-					'ActionMethod': 'RecordQuestionBLL.GetByRoomID'
-				};
-				this.websocketsend(actions);
+				// var ROOM = {
+				// 	'RoomID': this.roomId
+				// }
+				// //console.log(ROOM+"ROOM");
+				// //记得转换为字符串"Message"
+				// var ROOM2 = JSON.stringify(ROOM);
+				// //console.log(ROOM2+"ROOM2");
+				// let actions = {
+				// 	"Message":ROOM2,
+				// 	"Tag": "ac",
+				// 	'ActionMethod': 'RecordQuestionBLL.GetByRoomID'
+				// };
+				// this.websocketsend(actions);
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
@@ -126,7 +125,7 @@
 				console.log(strData)
 				if (strData.Code == 200) {
 					this.getRecordsList = strData.Data;
-					console.log('getRecordsList:'+strData)
+					console.log('getRecordsList:'+JSON.stringify(strData))
 				}
 			},
 			websocketsend(Data) { //数据发送

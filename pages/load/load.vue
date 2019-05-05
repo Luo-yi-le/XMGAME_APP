@@ -61,7 +61,6 @@
 				uni.switchTab({
 					url: '../index/index'
 				})
-
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				//heartCheck.reset().start(); //设置心跳
@@ -75,54 +74,34 @@
 				} else if (data.Tag == "i") {
 					this.roomID = data.RoomID
 				} else if (data.Tag == 'b') {
-					
-					
-// 					setTimeout(() => {
-						var Record = {
-							'AccountName': this.token,
-							'Integral': this.n_integral,
-							'CreateTime': this.createTime,
-							'EndTime': this.recordEndTime,
-							'RoomID': this.game.RoomID
-						};
-						var Record1 = JSON.stringify(Record);
-						console.log(Record1);
-						let Precord = {
-							'Message': Record1,
-							'Tag': 'ac',
-							'ActionMethod':'RecordBLL.AddRecord'
-						};
 
-						this.websocketsend(Precord);
-// 						var strData = typeof data == 'string' ? JSON.parse(data) : data;
-// 						setTimeout(() => {
-// 							console.log('strData:'+JSON.stringify(strData))
-// 							if (strData.ActionMethod == 'RecordBLL.AddRecord') {
-// 								var res = JSON.parse(strData.Message);
-// 								console.log('数据成功2：' + JSON.stringify(res))
-// 								var objData = typeof res == 'object' ? res : res
-// 								if (objData.Code === 200) {
-// 									api.RecordList = objData.Data;
-// 									console.log('数据成功1:' + JSON.stringify(api.RecordList));
-// 									uni.reLaunch({
-// 										url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
-// 									})
-// 								}
-// 							}
-// 						}, 500)
-// 
-// 					}, 500)
-					//跳到开始游戏的界面 开始游戏的功能若没有成功  该连接会报错
-					
-		}else if(data.Tag=='ac'&&data.ActionMethod){
-			console.log('--------------------------------');
-			uni.reLaunch({
-				url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
-		});		
-	 
-		}
+					var Record = {
+						'AccountName': this.token,
+						'Integral': this.n_integral,
+						'CreateTime': this.createTime,
+						'EndTime': this.recordEndTime,
+						'RoomID': this.game.RoomID
+					};
+					var Record1 = JSON.stringify(Record);
+					console.log(Record1);
+					let Precord = {
+						'Message': Record1,
+						'Tag': 'ac',
+						'ActionMethod': 'RecordBLL.AddRecord'
+					};
+					this.websocketsend(Precord);
+
+				} else if (data.Tag == 'ac' && data.ActionMethod == 'RecordBLL.AddRecord') {
+					var data1 = JSON.parse(data.Message);
+					if(data1.Code==200){
+						api.RecordList=data1.Data;
+						uni.reLaunch({
+							url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
+						});
+					}
+					// console.log('加入游戏：'+JSON.stringify(data))
+				}
 				localStorage.setItem('game', JSON.stringify(data));
-
 			},
 
 			//通信

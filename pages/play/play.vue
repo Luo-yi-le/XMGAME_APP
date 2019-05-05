@@ -47,10 +47,8 @@
 				forbid: '',
 				getTopicList: [],
 				token: '',
-				roomId: '',
-				
+				roomId: '',	
 				answer: '', //获取用户的答案
-
 				RecordList:'',//获取插入数据
 			}
 		},
@@ -101,16 +99,8 @@
 
 			//用户答题 罗贻乐
 			isRight() {
-				// if (this.getTopicList[this.TopIndex].Answer == this.answer) {
-				// 	console.log('答对了');
-				// 	this.bingo = this.bingo + 1;
-				// 	this.integral = this.integral + 2;
-				// 	console.log("积分" + this.integral)
-				// 	
-				// 	
-				// }
 				var id = this.getTopicList[this.TopIndex].ID;
-				console.log('id:' + id)
+				//console.log('id:' + id)
 				const strAnswer = {
 					"AccountName": this.token,
 					"QuestionID": id,
@@ -204,8 +194,8 @@
 		created() {
 			this.getGameRoomID(); //获取房间ID
 			this.initWebSocket();
-
 			this.selectUserInfo();
+			console.log('api:'+api.RecordList)
 		}
 	}
 </script>
