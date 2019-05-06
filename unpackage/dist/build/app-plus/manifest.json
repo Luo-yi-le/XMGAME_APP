@@ -4,7 +4,7 @@
     "iPhone",
     "iPad"
   ],
-  "id": "__UNI__C42D279",
+  "id": "__UNI__E9A5B04",
   "name": "Game02",
   "version": {
     "name": "1.0.0",
@@ -82,7 +82,7 @@
       }
     },
     "uni-app": {
-      "compilerVersion": "1.9.1",
+      "compilerVersion": "1.9.4",
       "control": "webview"
     }
   }

@@ -57,7 +57,7 @@
 		},
 		methods: {
 			onover: function(e) {
-				//websock.onclose() //关闭websocket
+				websock.close() //关闭websocket
 				uni.switchTab({
 					url: '../index/index'
 				})
@@ -96,7 +96,7 @@
 					if(data1.Code==200){
 						api.RecordList=data1.Data;
 						uni.reLaunch({
-							url: '../play/play?token=' + this.token + '&roomID=' + data.RoomID
+							url: '../play/play?token=' + this.token + '&roomID=' + this.game.RoomID
 						});
 					}
 					// console.log('加入游戏：'+JSON.stringify(data))
@@ -105,7 +105,6 @@
 			},
 
 			//通信
-			// #ifdef 
 			//创建WebSocket连接
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -139,10 +138,8 @@
 			webSocketClientOnerror() { //连接建立失败重连
 				this.initWebSocket();
 			},
-			// #endif
 
 			//用户操作
-			// #ifdef 
 			//提示用户进入房间name
 			showUser() {
 				var game1 = localStorage.getItem("game");
@@ -185,7 +182,6 @@
 				this.createTime = time
 				return this.createTime;
 			},
-			// #endif
 		},
 		onLoad: function(option) {
 			this.token = option.token

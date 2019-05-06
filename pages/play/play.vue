@@ -50,13 +50,15 @@
 				roomId: '',	
 				answer: '', //获取用户的答案
 				RecordList:'',//获取插入数据
+				game:''
 			}
 		},
 		onLoad: function(option) {
 			//获取名称
+			console.log('option:'+JSON.stringify(option))
 			this.roomId = option.roomID;
 			this.token = option.token;
-			console.log(this.roomId)
+			console.log('roomId:'+this.roomId)
 			// 实现倒计时功能
 			this.timer = setInterval(() => {
 				this.count = this.count - 1;
@@ -75,6 +77,7 @@
 		methods: {
 			over: function(e) {
 				//
+				this.isRight();
 				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
 					if (this.count > 0) {
 						console.log('答对了');
@@ -86,8 +89,9 @@
 						console.log('超时了！');
 					}
 				}
+				websock.close();
 				uni.redirectTo({
-					url: '../over/over?roomId=' + this.roomId + '&token=' + this.token + '&bingo=' + this.bingo
+					url: '../over/over?roomId=' + this.roomId  + '&token=' + this.token + '&bingo=' + this.bingo
 				});
 			},
 
@@ -129,7 +133,9 @@
 			//获取房间的ID
 			getGameRoomID() {
 				var game1 = localStorage.getItem("game");
-				this.game = JSON.parse(game1);
+				//this.game = game1;
+				console.log("game:"+this.game1)
+				
 			},
 			//创建WebSocket连接
 			initWebSocket() {
@@ -195,7 +201,7 @@
 			this.getGameRoomID(); //获取房间ID
 			this.initWebSocket();
 			this.selectUserInfo();
-			console.log('api:'+api.RecordList)
+			//console.log('api:'+api.RecordList)
 		}
 	}
 </script>

@@ -1,1 +1,9 @@
+<import src="/components/uni-collapse/uni-collapse.vue.wxml" />
+<import src="/components/uni-collapse-item/uni-collapse-item.vue.wxml" />
+<import src="/common/slots.wxml" />
+<import src="/components/uni-icon/uni-icon.vue.wxml" />
+
+<template name="6c14a000-default-6c14a000-0-+index"><view class="_view 6c14a000 all"><image src="../../static/img/body.png" class="_image 6c14a000 img" bindtap="handleProxy" data-eventid="{{'6c14a000-0-'+index}}" data-comkey="{{$k}}"></image><view bindtap="handleProxy" data-eventid="{{'6c14a000-1-'+index}}" data-comkey="{{$k}}" class="_view 6c14a000"><view class="_view 6c14a000 jf1" wx:if="{{test.Integral < 0}}">{{test.Integral}}</view><view class="_view 6c14a000 jf2" wx:else>+{{test.Integral}}</view><view class="_view 6c14a000 user">{{test.AccountName}}</view></view><view class="_view 6c14a000 roomid">房号：{{test.RoomID}}</view><view class="_view 6c14a000 good" bindtap="handleProxy" data-eventid="{{'6c14a000-2-'+index}}" data-comkey="{{$k}}"><view class="_view 6c14a000">开始：{{test.CreateTime}}</view><view class="_view 6c14a000">结束：{{test.EndTime}}</view></view><view wx:if="{{test.Integral < 0}}" class="_view 6c14a000 failure" bindtap="handleProxy" data-eventid="{{'6c14a000-4-'+index}}" data-comkey="{{$k}}">失败</view><view class="_view 6c14a000 successful" wx:else bindtap="handleProxy" data-eventid="{{'6c14a000-3-'+index}}" data-comkey="{{$k}}">胜利</view><view class="_view 6c14a000 fuhao" bindtap="handleProxy" data-eventid="{{'6c14a000-5-'+index}}" data-comkey="{{$k}}">></view></view></template>
+
+<template name="6c14a000-default-6c14a000-1"><block wx:for="{{ArrayTest}}" wx:for-index="index" wx:for-item="test"><template data="{{...$root['0'], ...$root[$kk+'6c14a000-0-'+index],$root, $slotdefault:'6c14a000-default-6c14a000-0-+index'}}" is="a795c5b0"></template></block><view class="_view 6c14a000 list"></view></template>
 

@@ -76,7 +76,6 @@
 			},
 
 			//用户操作（测试）
-			// #ifdef 
 			//登陆
 			login() {
 				//调用WebSocket（只有登陆和注册需要用户操作点击，其他的视情况而定）
@@ -93,7 +92,6 @@
 				this.user.password = this.test_pwd2
 			},
 			
-			// #endif
 			//打开控制台
 			openConsole() {
 				var el = new Image();
@@ -103,7 +101,6 @@
 				console.log('%cl', el);
 			},
 			//发送通信并回收
-			// #ifdef 
 			//打开连接
 			webSocketClientOnopen() {
 				console.log('打开成功')
@@ -143,10 +140,8 @@
 					alert('请检查账号密码是否正确！')
 				}
 			},
-			// #endif
 			
 			//连接通信
-			// #ifdef 
 			//创建WebSocket连接
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -169,7 +164,6 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
-			// #endif
 
 		},
 

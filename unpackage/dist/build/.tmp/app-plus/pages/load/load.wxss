@@ -18,9 +18,25 @@
   height: 50%;
   margin-top: 30%;
 }
+.Parentlevel .Option .userInfo {
+  width: 100%;
+  height: 100rpx;
+  background-color: #5DBA9D;
+  position: relative;
+}
+.Parentlevel .Option .userInfo .user {
+  width: 50%;
+  float: left;
+}
+.Parentlevel .Option .userInfo .user .userName {
+  margin-left: 33%;
+}
+.Parentlevel .Option .userInfo .user .userIntegral {
+  margin-left: 33%;
+}
 .Parentlevel .Option .P_hostile {
   width: 100%;
-  height: 300rpx;
+  height: 200rpx;
   margin-top: 30%;
   background-color: #5DBA9D;
   position: relative;
@@ -32,6 +48,11 @@
   position: absolute;
   margin: 8% 0 0 20%;
   background-color: coral;
+}
+.Parentlevel .Option .P_hostile .P_GameplayerA .username {
+  margin-top: 80rpx;
+  margin-left: 40rpx;
+  color: #000;
 }
 .Parentlevel .Option .P_hostile .P_GameplayerVS {
   width: 130rpx;
@@ -55,5 +76,17 @@
 }
 .Parentlevel .Option .P_hostile .P_Gsapn {
   font-size: 2rem;
+}
+.load_view {
+  width: 130rpx;
+  height: 130rpx;
+}
+.load_but {
+  height: 34%;
+  font-size: 35rpx;
+  background-color: #5DBA9D;
+  border-radius: 50px;
+  color: #ECECEC;
+  margin-top: 5%;
 }
 

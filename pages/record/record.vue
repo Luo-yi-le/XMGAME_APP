@@ -30,7 +30,6 @@
 					</view>
 				</uni-collapse-item>
 			</block>
-
 			<!-- 罗贻乐 显示用户的同房间的记录 -->
 			<view class="list"></view>
 		</uni-collapse>
@@ -67,7 +66,6 @@
 		},
 		methods: {
 			//用户操作
-			// #ifdef 
 			//获取用户
 			getUser() {
 				const that = this;
@@ -97,7 +95,6 @@
 
 			},
 			//罗贻乐 addTime 2019-4-28 17:30 功能：获取用户的同房间的对战记录
-			// #ifdef 
 			selectRecord(roomid) {
 				var room = {
 					'RoomID': roomid
@@ -117,12 +114,8 @@
 					)
 				}, 500)
 			},
-			// #endif
-
-			// #endif
 
 			//数据回收 （通信）
-			// #ifdef 
 			webSocketClientOnmessage(e) {
 				//获取出来是字符串，转为json格式
 				var data = JSON.parse(e.data);
@@ -152,10 +145,8 @@
 					console.log("错误")
 				}
 			},
-			// #endif
 
 			//通信方法
-			// #ifdef
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
@@ -189,7 +180,6 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
-			// #endif
 
 		}
 	}

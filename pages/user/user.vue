@@ -89,10 +89,8 @@
 				that.user = JSON.parse(userInfo);
 				console.log(that.user)
 			},
-			//用户点击操作方法
-			// #ifdef 
+			//用户点击操作方法 
 			//根据用户令牌得到用户
-			// #ifdef 根据用户令牌得到用户
 			getTokenForUser(token) {
 				const strToken = {
 					"Token": token
@@ -105,10 +103,8 @@
 				}
 				websock.send(JSON.stringify(param))
 			},
-			// #endif
 
 			//根据用户ID得到用户
-			// #ifdef 
 			getIdForUser(id) {
 				console.log(id)
 				const strId = {
@@ -122,10 +118,8 @@
 				}
 				websock.send(JSON.stringify(param))
 			},
-			// #endif
 
 			//模拟用户答题
-			// #ifdef 
 			isRight(token) {
 				const strAnswer = {
 					"AccountName": token,
@@ -141,10 +135,8 @@
 				}
 				this.websocketsend(action)
 			},
-			// #endif
 			
 			//修改用户积分
-			// #ifdef 
 			updateIntegral(token){
 				const strToken = {
 					"AccountName": token,
@@ -160,12 +152,7 @@
 				console.log(action)
 				this.websocketsend(action)
 			},
-			// #endif
-			
-			// #endif
-			
 			//数据回收 （通信方法）
-			// #ifdef 
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
 				var strData = typeof data == 'string' ? JSON.parse(data) : data;
@@ -201,10 +188,8 @@
 					}
 				}
 			},
-			// #endif
 		
 			//通信方法
-			// #ifdef 
 				initWebSocket() {
 				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
@@ -231,15 +216,12 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
-			// #endif
-
 		},
 		created() {
 			this.selectUserInfo();
 			this.initWebSocket();
 		},
 		onLoad() {
-
 		}
 	}
 </script>

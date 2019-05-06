@@ -3,7 +3,7 @@
 	<view id="box">
 		<view class="square">
 			<view class="R_ftext">
-				<text class="R_text" v-if="FractionA>FractionB"> {{ResultA}}</text>
+				<text class="R_text" v-if="getRecordsList[0].Integral>getRecordsList[1].Integral"> {{ResultA}}</text>
 				<text class="R_text" v-else> {{ResultB}}</text>
 			</view>
 
@@ -30,19 +30,11 @@
 						<th v-if="item.Integral>0"><text>+</text><text>{{item.Integral}}</text></th>
 						<th v-else><text></text><text>{{item.Integral}}</text></th>
 					</tr>
-
 				</table>
-
 			</view>
-
 			<view class="R_vi">
-				<view class="R_via" @click="onpus">
-					<text>再来一局</text>
-				</view>
-
-				<view class="R_via" @click="onpus">
-					<text>重新匹配</text>
-				</view>
+				<view class="R_via" @click="onpus"><text>再来一局</text></view>
+				<view class="R_via" @click="onpus"><text>重新匹配</text></view>
 				<view style="clear: both;"></view>
 			</view>
 
@@ -68,7 +60,8 @@
 				FractionA: '5', //模拟分数 A
 				FractionB: '1', //模拟分数 B
 				ResultA: '胜利', //胜负
-				ResultB: '失败' //胜负
+				ResultB: '失败' ,//胜负
+				bingo:''
 			}
 		},
 		methods: {
@@ -84,14 +77,14 @@
 			},
 			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
-				const roomid={
+				const roomid = {
 					'RoomID': this.roomId
 				}
-				const jsogRoomid=JSON.stringify(roomid)
+				const jsogRoomid = JSON.stringify(roomid)
 				let entity = {
-					"Message":jsogRoomid,
+					"Message": jsogRoomid,
 					"Tag": "ac",
-					"ActionMethod": "RecordQuestionBLL.GetByRoomID"
+					"ActionMethod": "RecordBLL.GetRecords"
 				};
 				//console.log(entity)
 				this.websocketsend(entity);
@@ -105,6 +98,7 @@
 			},
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
 				console.log('打开成功')
+				this.GetRecords();
 				// var ROOM = {
 				// 	'RoomID': this.roomId
 				// }
@@ -122,10 +116,10 @@
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
 				var strData = JSON.parse(data.Message);
-				console.log(strData)
+				console.log("strData:" + strData)
 				if (strData.Code == 200) {
 					this.getRecordsList = strData.Data;
-					console.log('getRecordsList:'+JSON.stringify(strData))
+					console.log('getRecordsList:' + JSON.stringify(strData))
 				}
 			},
 			websocketsend(Data) { //数据发送
@@ -141,13 +135,13 @@
 		onLoad(option) {
 			this.roomId = option.roomId
 			this.name = option.name
+			this.bingo=option.bingo
+			console.log(this.roomId);
+
 		},
 		created() {
 			this.initWebSocket();
-			setTimeout(()=>{
-				this.GetRecords();
-			},500)
-			
+
 		},
 		//排序
 		computed: {

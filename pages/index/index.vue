@@ -48,7 +48,6 @@
 				});
 			},
 			//用户操作
-			// #ifdef 
 			setHeight() {
 				const that = this;
 				var width = document.getElementsByClassName("getWidth"); //这里的到的是一个数组
@@ -56,6 +55,7 @@
 			},
 			begin(name) {
 				const that = this;
+				websock.close();
 				uni.reLaunch({
 					url: '../load/load?token=' + that.user.Token
 				})
@@ -64,10 +64,8 @@
 				const that = this
 				that.user = JSON.parse(localStorage.getItem('userInfo'))
 			},
-			// #endif
 
 			//通信
-			// #ifdef 
 			//创建WebSocket连接
 			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
@@ -98,7 +96,6 @@
 			webSocketClientOnerror() { //连接建立失败重连
 				initWebSocket();
 			},
-			// #endif
 
 		},
 		created() {

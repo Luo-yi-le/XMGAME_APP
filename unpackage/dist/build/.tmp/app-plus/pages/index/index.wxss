@@ -1,5 +1,4 @@
-
-.view1{
+.view1 {
 	height: 100rpx;
 	padding: 0 4%;
 	border-bottom: 1rpx solid rgb(243, 243, 243);
@@ -23,17 +22,34 @@
 	color: #666;
 	font-size: 30rpx;
 }
-.getWidth{
+.getWidth {
 	border: 1px solid #367B36;
 	float: left;
 	border-radius: 20rpx;
 	width: 350rpx;
 	height: 450rpx;
+	list-style-type: none;
 	margin: 10rpx;
 }
-.am-thumbnail{
+.am-thumbnail {
 	width: 350rpx;
 	height: 450rpx;
 	border-radius: 20rpx;
 }
+.index_view{
+	text-align: center;height: 120rpx;
+}
+.index_view2{
+	background: #fff;
+}
+.index_view3{
+	border-bottom: 15rpx solid #f1f1f1;background: #fff;
+}
+.index_view4{
+	-webkit-flex-shrink: 0;
+	    -ms-flex-negative: 0;
+	        flex-shrink: 0;width: 50rpx;height: 50rpx;
+}
+
+/* 提交 */
 
