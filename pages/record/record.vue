@@ -30,7 +30,6 @@
 					</view>
 				</uni-collapse-item>
 			</block>
-			<!-- 罗贻乐 显示用户的同房间的记录 -->
 			<view class="list"></view>
 		</uni-collapse>
 

@@ -71,22 +71,70 @@
 				test_pwd2: '123',
 			}
 		},
-		// onLoad() {
-		// 	//判断是否有登陆过
-		// 	
-		// },
 		methods: {
 			onreg: function(e) {
 				uni.navigateTo({
 					url: '../register/register'
 				})
 			},
-
 			//用户操作（测试）
 			//登陆
 			bindLogin() {
-				//调用WebSocket（只有登陆和注册需要用户操作点击，其他的视情况而定）
-				this.initWebSocket();
+				var user1 = {
+					'AccountName': this.user.accountName,
+					'UserPassWord': this.user.password
+				};
+				var user2 = JSON.stringify(user1)
+				let actions = {
+					"Message": user2,
+					"Tag": "ac",
+					'ActionMethod': 'UserBLL.Login',
+				};
+				console.log(typeof JSON.stringify(actions));
+				//数据连接
+				uni.connectSocket({
+					url: 'ws://172.16.31.232:4000',
+					success: function(res) {
+						console.log("WebSocket连接成功");
+						//数据打开
+						uni.onSocketOpen(function(res) {
+							console.log("WebSocket连接打开");
+							//数据发送
+							uni.sendSocketMessage({
+								data: JSON.stringify(actions),
+								success: function(res) {
+									console.log("数据发送成功: " + JSON.stringify(actions));
+									uni.onSocketMessage(function(e) {
+										var data = JSON.parse(e.data);
+										var res = JSON.parse(data.Message)
+										console.log("数据接收成功: " + res);
+										if (res.Code == 200) {
+											uni.showToast({
+												title: res.Data.AccountName + '登陆' + res.Message,
+												duration: 1000
+											});
+											uni.setStorage({
+												key: 'userInfo',
+												data: res.Data,
+												success: function() {
+													console.log('success' + res.Data);
+												}
+											});
+											setTimeout(() => {
+												uni.reLaunch({
+													url: '../index/index'
+												})
+											}, 1001)
+										}
+									})
+								}
+							})
+						})
+					},
+					fail: function(res) {
+						console.log("WebSocket连接失败:" + res);
+					}
+				});
 			},
 			//测试账号1
 			getTest1() {
@@ -109,77 +157,6 @@
 			// },
 			//发送通信并回收
 			//打开连接
-			webSocketClientOnopen() {
-				console.log('打开成功')
-				var user = {
-					'AccountName': this.user.accountName,
-					'UserPassWord': this.user.password
-				};
-				var user1 = JSON.stringify(user)
-				let actions = {
-					"Message": user1,
-					"Tag": "ac",
-					'ActionMethod': 'UserBLL.Login',
-				};
-				this.websocketsend(actions);
-			},
-
-			//数据回收
-			webSocketClientOnmessage(e) {
-				var data = JSON.parse(e.data);
-				var res = JSON.parse(data.Message)
-				if (res.Code == 200) {
-					this.login({
-						userInfo:res.Data,
-					})
-					console.log(res.Data);
-					//使用uni-app中的暂存 确保第二次免登
-					uni.setStorage({
-						key: 'userInfo',
-						data: res.Data,
-						success: function() {
-							console.log('success' + res.Data);
-						}
-					});
-					//提示用户登陆成功
-					uni.showToast({
-						title: res.Data.AccountName + res.Message,
-						duration: 1000
-					});
-					//延迟进入首页
-					setTimeout(() => {
-						uni.reLaunch({
-							url: '../index/index'
-						})
-					}, 1001)
-				} else {
-					alert('请检查账号密码是否正确！')
-				}
-			},
-
-			//连接通信
-			//创建WebSocket连接
-			initWebSocket: function() {
-				websock = new WebSocket(api.wsuri);
-				websock.onopen = this.webSocketClientOnopen //打开
-				websock.onmessage = this.webSocketClientOnmessage //接收信息
-				websock.onerror = this.webSocketClientOnerror //错误
-				websock.onclose = this.webSocketClientOnclose //关闭
-			},
-
-			websocketsend(Data) { //发送数据
-				console.log('数据发送：' + JSON.stringify(Data));
-				websock.send(JSON.stringify(Data));
-			},
-			//重连信息
-			webSocketClientOnerror(e) {
-				this.initWebSocket();
-				console.log("websock连接错误,重新连接", e);
-			},
-			//连接关闭
-			webSocketClientOnclose(e) {
-				console.log("websock连接关闭", e);
-			},
 			...mapMutations(['login'])
 		},
 

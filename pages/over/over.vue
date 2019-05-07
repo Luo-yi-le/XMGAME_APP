@@ -1,10 +1,8 @@
 <template>
-
 	<view id="box">
 		<view class="square">
 			<view class="R_ftext">
-				<text class="R_text" v-if="getRecordsList[0].Integral>getRecordsList[1].Integral
-				&&getRecordsList[0].AccountName!=userInfo.AccountName">
+				<text class="R_text" v-if="getRecordsList[0].Integral>getRecordsList[1].Integral&&getRecordsList[0].AccountName!=userInfo.AccountName">
 					{{ResultA}}</text>
 				<text class="R_text" v-else-if="getRecordsList[0].Integral==getRecordsList[1].Integral"> {{ResultC}}</text>
 				<text class="R_text" v-else> {{ResultB}}</text>
@@ -40,7 +38,6 @@
 				<view class="R_via" @click="onpus"><text>重新匹配</text></view>
 				<view style="clear: both;"></view>
 			</view>
-
 			<view class="Close" @click="onover">
 				<text>关闭</text>
 			</view>
@@ -50,6 +47,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	//周少鸿 4/30 比赛结果处理
 	var websock;
 	import * as api from '../../static/js/api.js'
@@ -66,20 +67,13 @@
 				ResultB: '您失败了', //胜负
 				ResultC: '打成平局', //胜负
 				bingo: '',
-				userInfo: '',
+
 			}
 		},
+		computed: {
+			...mapState(['userInfo', 'login'])
+		},
 		methods: {
-			selectUserInfo() {
-				const that = this;
-				uni.getStorage({
-					key: 'userInfo',
-					success: function(res) {
-						console.log("获取到数据" + JSON.stringify(res.data));
-						that.userInfo = JSON.parse(res.data);
-					}
-				});
-			},
 			onpus: function(e) {
 				uni.redirectTo({
 					url: '../load/load?roomId=' + this.roomId + '&name=' + this.name
@@ -94,7 +88,7 @@
 			GetRecords() {
 				const roomid = {
 					//'RoomID': this.roomId
-					'RoomID': '5bf26a4e-cf5e-4d14-ba55-041695407f2b'
+					'RoomID': this.roomId
 				}
 				const jsogRoomid = JSON.stringify(roomid)
 				let entity = {
@@ -139,7 +133,6 @@
 			this.bingo = option.bingo
 		},
 		created() {
-			this.selectUserInfo();
 			this.initWebSocket();
 		},
 		//排序

@@ -63,8 +63,6 @@
 				})
 			},
 			selectUserInfo() {
-				// const that = this
-				// that.user = JSON.parse(localStorage.getItem('userInfo'))
 				const that = this;
 				uni.getStorage({
 					key: 'userInfo',
@@ -74,42 +72,8 @@
 					}
 				});
 			},
-
-			//通信
-			//创建WebSocket连接
-			initWebSocket() {
-				websock = new WebSocket(api.wsuri);
-				websock.onopen = this.webSocketClientOnopen //打开
-				websock.onmessage = this.webSocketClientOnmessage //接收信息
-				websock.onerror = this.webSocketClientOnerror //错误
-				websock.onclose = this.webSocketClientOnclose //关闭
-			},
-			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
-				//发送用户信息
-				let entity = {
-					"FromUser": this.user.Token,
-					"Tag": "c"
-				};
-				this.websocketsend(entity);
-			},
-			webSocketClientOnmessage(e) { //数据接收
-				const redata = JSON.parse(e.data);
-				console.log(redata)
-			},
-			websocketsend(Data) { //数据发送
-				console.log(Data);
-				// var websock = new WebSocket("ws://127.0.0.1:4000");
-				websock.send(JSON.stringify(Data));
-			},
-			webSocketClientOnclose(e) { //关闭
-			},
-			webSocketClientOnerror() { //连接建立失败重连
-				initWebSocket();
-			},
-
 		},
 		created() {
-			this.initWebSocket();
 		},
 		onShow() {
 			this.selectUserInfo();
