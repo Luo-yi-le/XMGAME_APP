@@ -1,57 +1,50 @@
-
-#box .square{
-	position: absolute;
-	background: lightcyan;
-	position:absolute;
-	left: 50%;
-	top: 45%;
-	-webkit-transform: translate(-50%, -50%);
-	    -ms-transform: translate(-50%, -50%);
-	        transform: translate(-50%, -50%);
-	width: 600rpx;
-	height: 600rpx;
+#box .square {
+		position: absolute;
+		background: lightcyan;
+		position: absolute;
+		left: 50%;
+		top: 45%;
+		-webkit-transform: translate(-50%, -50%);
+		    -ms-transform: translate(-50%, -50%);
+		        transform: translate(-50%, -50%);
+		width: 600rpx;
+		height: 600rpx;
 }
-.R_ftext{
+.R_ftext {
 		width: 100%;
 		height: 70rpx;
 		text-align: center;
 		line-height: 70rpx;
 		background-color: orange;
 }
-.R_text{
-}
-.R_ptr{
+.R_text {}
+.R_ptr {
 		width: 200rpx;
 		height: 55rpx;
 }
-.R_vi{
+.R_vi {
 		width: 100%;
 		height: 120rpx;
 		margin-top: 10%;
 }
-.R_via{
-			width: 35%;
-			height: 100rpx;
-			text-align: center;
-			line-height: 100rpx;
-			border-radius:60rpx; 
-			float: left;
-			margin-left: 10%;
-			background-color: lightcoral;
+.R_via {
+		width: 35%;
+		height: 100rpx;
+		text-align: center;
+		line-height: 100rpx;
+		border-radius: 60rpx;
+		float: left;
+		margin-left: 10%;
+		background-color: lightcoral;
 }
-.Close{
+.Close {
 		width: 90%;
 		height: 100rpx;
 		text-align: center;
 		line-height: 100rpx;
 		margin-left: 5%;
 		background-color: lightcoral;
-		
+
 		border-radius: 50rpx;
 }
-	
-	
-
-
-
 

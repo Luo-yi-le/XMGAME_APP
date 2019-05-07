@@ -3,7 +3,10 @@
 	<view id="box">
 		<view class="square">
 			<view class="R_ftext">
-				<text class="R_text" v-if="getRecordsList[0].Integral>getRecordsList[1].Integral"> {{ResultA}}</text>
+				<text class="R_text" v-if="getRecordsList[0].Integral>getRecordsList[1].Integral
+				&&getRecordsList[0].AccountName!=userInfo.AccountName">
+					{{ResultA}}</text>
+				<text class="R_text" v-else-if="getRecordsList[0].Integral==getRecordsList[1].Integral"> {{ResultC}}</text>
 				<text class="R_text" v-else> {{ResultB}}</text>
 			</view>
 
@@ -24,7 +27,7 @@
 						<th>{{item.AccountName}}</th>
 						<th>
 							<view class="R_ptr">
-								<text>对:</text><text>7</text><text>题</text>
+								<text>对:</text><text>{{bingo}}</text><text>题</text>
 							</view>
 						</th>
 						<th v-if="item.Integral>0"><text>+</text><text>{{item.Integral}}</text></th>
@@ -59,12 +62,24 @@
 				FracRest: '', //结果
 				FractionA: '5', //模拟分数 A
 				FractionB: '1', //模拟分数 B
-				ResultA: '胜利', //胜负
-				ResultB: '失败' ,//胜负
-				bingo:''
+				ResultA: '您胜利了', //胜负
+				ResultB: '您失败了', //胜负
+				ResultC: '打成平局', //胜负
+				bingo: '',
+				userInfo: '',
 			}
 		},
 		methods: {
+			selectUserInfo() {
+				const that = this;
+				uni.getStorage({
+					key: 'userInfo',
+					success: function(res) {
+						console.log("获取到数据" + JSON.stringify(res.data));
+						that.userInfo = JSON.parse(res.data);
+					}
+				});
+			},
 			onpus: function(e) {
 				uni.redirectTo({
 					url: '../load/load?roomId=' + this.roomId + '&name=' + this.name
@@ -78,7 +93,8 @@
 			//功能:获取排行榜 ,person:罗贻乐, time:2019-4-28 9:42
 			GetRecords() {
 				const roomid = {
-					'RoomID': this.roomId
+					//'RoomID': this.roomId
+					'RoomID': '5bf26a4e-cf5e-4d14-ba55-041695407f2b'
 				}
 				const jsogRoomid = JSON.stringify(roomid)
 				let entity = {
@@ -86,7 +102,6 @@
 					"Tag": "ac",
 					"ActionMethod": "RecordBLL.GetRecords"
 				};
-				//console.log(entity)
 				this.websocketsend(entity);
 			},
 			initWebSocket() {
@@ -99,19 +114,6 @@
 			webSocketClientOnopen(e) { //连接建立之后执行send方法发送数据
 				console.log('打开成功')
 				this.GetRecords();
-				// var ROOM = {
-				// 	'RoomID': this.roomId
-				// }
-				// //console.log(ROOM+"ROOM");
-				// //记得转换为字符串"Message"
-				// var ROOM2 = JSON.stringify(ROOM);
-				// //console.log(ROOM2+"ROOM2");
-				// let actions = {
-				// 	"Message":ROOM2,
-				// 	"Tag": "ac",
-				// 	'ActionMethod': 'RecordQuestionBLL.GetByRoomID'
-				// };
-				// this.websocketsend(actions);
 			},
 			webSocketClientOnmessage(e) { //数据接收
 				var data = JSON.parse(e.data);
@@ -134,14 +136,11 @@
 		},
 		onLoad(option) {
 			this.roomId = option.roomId
-			this.name = option.name
-			this.bingo=option.bingo
-			console.log(this.roomId);
-
+			this.bingo = option.bingo
 		},
 		created() {
+			this.selectUserInfo();
 			this.initWebSocket();
-
 		},
 		//排序
 		computed: {

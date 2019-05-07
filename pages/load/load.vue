@@ -22,8 +22,8 @@
 			</view>
 			<view class="userInfo">
 				<view class="user">
-					<view class="userName">用户名:<text>{{user.AccountName}}</text></view>
-					<view class="userIntegral">积分:<text>{{user.Integral}}</text></view>
+					<view class="userName">用户名:<text>{{userInfo.AccountName}}</text></view>
+					<view class="userIntegral">积分:<text>{{userInfo.Integral}}</text></view>
 				</view>
 				<!-- <view class="user">
 					<view class="userName" v-if="user.AccountName==this.name">用户名:<text>{{game.ToUser[0]}}</text></view>
@@ -37,6 +37,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	// 罗贻乐
 	//2019-4-56
 	//修改了准备游戏的bug
@@ -47,13 +51,16 @@
 			return {
 				token: '',
 				roomID: '',
-				user: '',
 				game: '',
 				createTime: '', //创建时间 or 结算时间
 				recordEndTime: '', //创建游戏距离需要带的时间
 				n_integral: -20,
-				RecordList: ''
+				RecordList: '',
+				toUser: ''
 			}
+		},
+		computed: {
+			...mapState(['userInfo', 'login'])
 		},
 		methods: {
 			onover: function(e) {
@@ -74,7 +81,7 @@
 				} else if (data.Tag == "i") {
 					this.roomID = data.RoomID
 				} else if (data.Tag == 'b') {
-
+					this.toUser = data.toUser;
 					var Record = {
 						'AccountName': this.token,
 						'Integral': this.n_integral,
@@ -93,8 +100,8 @@
 
 				} else if (data.Tag == 'ac' && data.ActionMethod == 'RecordBLL.AddRecord') {
 					var data1 = JSON.parse(data.Message);
-					if(data1.Code==200){
-						api.RecordList=data1.Data;
+					if (data1.Code == 200) {
+						api.RecordList = data1.Data;
 						uni.reLaunch({
 							url: '../play/play?token=' + this.token + '&roomID=' + this.game.RoomID
 						});
@@ -159,12 +166,6 @@
 					'RoomID': this.game.RoomID
 				};
 				this.websocketsend(readyGame);
-
-			},
-			//获取用户信息
-			selectUserInfo() {
-				const that = this
-				that.user = JSON.parse(localStorage.getItem('userInfo'))
 			},
 
 			//获取系统的当前时间
@@ -177,7 +178,7 @@
 				var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
 				var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
 				var time = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
-				var t = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + (seconds + parseInt(10));
+				var t = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
 				this.recordEndTime = t;
 				this.createTime = time
 				return this.createTime;
@@ -185,10 +186,8 @@
 		},
 		onLoad: function(option) {
 			this.token = option.token
-			console.log(this.token);
 		},
 		created() {
-			this.selectUserInfo();
 			this.getSystemTime();
 			setTimeout(() => {
 				this.showUser();

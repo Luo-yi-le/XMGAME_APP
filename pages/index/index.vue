@@ -40,7 +40,9 @@
 				}],
 			}
 		},
-		onLoad() {},
+		onLoad() {
+			
+		},
 		methods: {
 			GetGame: function() {
 				uni.navigateTo({
@@ -61,8 +63,16 @@
 				})
 			},
 			selectUserInfo() {
-				const that = this
-				that.user = JSON.parse(localStorage.getItem('userInfo'))
+				// const that = this
+				// that.user = JSON.parse(localStorage.getItem('userInfo'))
+				const that = this;
+				uni.getStorage({
+					key: 'userInfo',
+					success: function(res) {
+						console.log("获取到数据"+res.data);
+						that.user = res.data;
+					}
+				});
 			},
 
 			//通信

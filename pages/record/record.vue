@@ -6,8 +6,8 @@
 				<uni-collapse-item :title="test.AccountName" :open="false" :key="index">
 
 					<view class="all">
-						<image src="../../static/img/body.png" class="img" @click="selectOneRecord(user.Token,test.RoomID)"></image>
-						<view @click="selectOneRecord(user.Token,test.RoomID)">
+						<image src="../../static/img/body.png" class="img" @click="selectOneRecord(userInfo.Token,test.RoomID)"></image>
+						<view @click="selectOneRecord(userInfo.Token,test.RoomID)">
 							<view class="jf1" v-if="test.Integral < 0">{{test.Integral}}</view>
 							<view class="jf2" v-else="test.Integral > 0">+{{test.Integral}}</view>
 							<view class="user">{{test.AccountName}}</view>
@@ -15,7 +15,7 @@
 						<view class="roomid">
 							房号：{{test.RoomID}}
 						</view>
-						<view class="good" @click="selectOneRecord(user.Token,test.RoomID)">
+						<view class="good" @click="selectOneRecord(userInfo.Token,test.RoomID)">
 							<view>开始：{{test.CreateTime}}</view>
 							<view>结束：{{test.EndTime}}</view>
 						</view>
@@ -38,6 +38,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	var websock;
 	import * as api from '../../static/js/api.js';
 	import uniCollapse from '@/components/uni-collapse/uni-collapse.vue' //折叠面板组件
@@ -53,24 +57,21 @@
 		data() {
 			return {
 				ArrayTest: [],
-				user: '',
 				oneRecord: '',
 				getRecord: '',
 			}
 		},
-		created() {
-			this.getUser();
+		computed: {
+			...mapState(['userInfo', 'login'])
 		},
-		onLoad() {
+		created() {
 			this.initWebSocket();
 		},
+		onLoad() {
+
+		},
 		methods: {
-			//用户操作
-			//获取用户
-			getUser() {
-				const that = this;
-				that.user = JSON.parse(localStorage.getItem('userInfo'))
-			},
+
 			//罗贻乐 addTime 2019-4-28 14:30 功能：获取用户的名称和token查询单条记录
 			selectOneRecord(accountName, roomId) {
 				const list = {
@@ -156,7 +157,7 @@
 			},
 			webSocketClientOnopen() {
 				var user1 = {
-					'AccountName': this.user.Token
+					'AccountName': this.userInfo.Token
 				}
 				//记得转换为字符串"Message"
 				var user2 = JSON.stringify(user1)

@@ -2,9 +2,10 @@
 	<view class="play_view">
 		<view class="zhu">
 			<view class="play_view1">{{ TopIndex + 1 }} / {{ getTopicList.length }}</view>
-			<view class="play_view2"><text class="play_text">玩家</text></view>
+			<view class="play_view2"><text class="play_text"></text></view>
 			<view>
-				<image src="../../static/img/body.png" class="play_img" />
+				<!-- <image src="../../static/img/body.png" class="play_img" /> -->
+				<view style="play_view3">玩家:{{ userInfo.AccountName }}</view>
 				<view style="play_view3">积分:{{ userInfo.Integral }}</view>
 			</view>
 		</view>
@@ -33,6 +34,10 @@
 	</view>
 </template>
 <script>
+		import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	var websock;
 	import * as api from '../../static/js/api.js'
 	var i = 0;
@@ -41,24 +46,30 @@
 			return {
 				bingo: 0, //答对的数量
 				TopIndex: 0, //下标
-				integral: 0, //当前所获得的积分
 				count: 10,
-				userInfo: '',
 				forbid: '',
-				getTopicList: [],
+				getTopicList: [{
+					GenreName: '',
+					Topic: '',
+					Answer: ''
+				}],
 				token: '',
-				roomId: '',	
+				roomId: '',
 				answer: '', //获取用户的答案
-				RecordList:'',//获取插入数据
-				game:''
+				RecordList: '', //获取插入数据
+				game: '',
+				b:false,
 			}
+		},
+		computed: {
+			...mapState(['userInfo', 'login'])
 		},
 		onLoad: function(option) {
 			//获取名称
-			console.log('option:'+JSON.stringify(option))
+			console.log('option:' + JSON.stringify(option))
 			this.roomId = option.roomID;
 			this.token = option.token;
-			console.log('roomId:'+this.roomId)
+			console.log('roomId:' + this.roomId)
 			// 实现倒计时功能
 			this.timer = setInterval(() => {
 				this.count = this.count - 1;
@@ -77,34 +88,8 @@
 		methods: {
 			over: function(e) {
 				//
-				this.isRight();
-				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
-					if (this.count > 0) {
-						console.log('答对了');
-						this.bingo = this.bingo + 1;
-						this.integral = this.integral + 2;
 
-						console.log('积分:' + this.integral);
-					} else {
-						console.log('超时了！');
-					}
-				}
-				websock.close();
-				uni.redirectTo({
-					url: '../over/over?roomId=' + this.roomId  + '&token=' + this.token + '&bingo=' + this.bingo
-				});
-			},
-
-			selectUserInfo() {
-				const that = this;
-				const user = localStorage.getItem("userInfo");
-				that.userInfo = JSON.parse(user);
-			},
-
-			//用户答题 罗贻乐
-			isRight() {
 				var id = this.getTopicList[this.TopIndex].ID;
-				//console.log('id:' + id)
 				const strAnswer = {
 					"AccountName": this.token,
 					"QuestionID": id,
@@ -119,7 +104,40 @@
 				}
 				console.log(JSON.stringify(action))
 				this.websocketsend(action)
+				this.isRight();
+				this.b = true;
+				//	websock.close();
+			},
 
+			//用户答题 罗贻乐
+			isRight() {
+				//按下一题时，进行判断
+				var id = this.getTopicList[this.TopIndex].ID;
+				const strAnswer = {
+					"AccountName": this.token,
+					"QuestionID": id,
+					'Reply': this.answer,
+					"RecordID": api.RecordList.ID,
+				}
+				const jsonAnswer = JSON.stringify(strAnswer);
+				const action = {
+					"Message": jsonAnswer,
+					"Tag": "ac",
+					"ActionMethod": "RecordQuestionBLL.IsRight"
+				}
+				console.log(JSON.stringify(action))
+				this.websocketsend(action)
+				if (this.getTopicList[this.TopIndex].Answer == this.answer) {
+					if (this.count > 0) {
+						console.log('答对了');
+						this.bingo = this.bingo + 1;
+
+						console.log(this.bingo)
+						//this.isRight();
+					} else {
+						console.log('超时了！');
+					}
+				}
 				this.answer = '';
 				this.TopIndex = this.TopIndex + 1;
 				this.count = 10;
@@ -134,8 +152,8 @@
 			getGameRoomID() {
 				var game1 = localStorage.getItem("game");
 				//this.game = game1;
-				console.log("game:"+this.game1)
-				
+				console.log("game:" + this.game1)
+
 			},
 			//创建WebSocket连接
 			initWebSocket() {
@@ -150,7 +168,7 @@
 			//打开连接
 			webSocketClientOnopen() {
 				console.log('打开成功');
-				
+
 				//获取游戏题目
 				let topicList = {
 					Tag: 'ac',
@@ -163,13 +181,18 @@
 			webSocketClientOnmessage(e) {
 				var data = JSON.parse(e.data);
 				var strData = typeof data == 'string' ? JSON.parse(data) : data;
-				 if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
+				if (strData.ActionMethod == 'QuestionBLL.GetQuestions') {
 					var data1 = JSON.parse(data.Message);
 					console.log(data1.Data);
 					if (data1.Code == 200) {
 						//把数据赋值给当前定义数组
 						this.getTopicList = data1.Data;
 					}
+				} else if (strData.ActionMethod == "RecordQuestionBLL.IsRight" && this.b == true) {
+					uni.redirectTo({
+						url: '../over/over?roomId=' + this.roomId + '&token=' + this.token + '&bingo=' + this.bingo,
+					});
+					websock.close();
 				} else if (strData.ActionMethod == "RecordQuestionBLL.IsRight") {
 					var res = JSON.parse(strData.Message);
 					console.log('模拟答题：' + JSON.stringify(res))
@@ -200,7 +223,6 @@
 		created() {
 			this.getGameRoomID(); //获取房间ID
 			this.initWebSocket();
-			this.selectUserInfo();
 			//console.log('api:'+api.RecordList)
 		}
 	}

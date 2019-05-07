@@ -3,16 +3,16 @@
 		<!-- 用户信息卡 -->
 		<view class="list-content">
 			<view class="list">
-				<view class="li noborder" v-if="user">
+				<view class="li noborder" v-if="userInfo">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="textName">用户名：<text>{{user.AccountName}}</text></view>
-					<view class="textName">编号：<text>{{user.ID}}</text></view>
+					<view class="textName">用户名：<text>{{userInfo.AccountName}}</text></view>
+					<view class="textName">编号：<text>{{userInfo.ID}}</text></view>
 				</view>
 				<view class="li noborder" v-else>
 					<navigator url="../login/login">你还没登陆，请去登陆</navigator>
 				</view>
 				<view class="user-data-bar">
-					<view class="data-bar">积分:<text class="data-bar-num">{{user.Integral}}</text></view>
+					<view class="data-bar">积分:<text class="data-bar-num">{{userInfo.Integral}}</text></view>
 					<view class="data-bar">现金:<text class="data-bar-num">{{money}}</text></view>
 					<view class="data-bar">排名:<text class="data-bar-num">{{Fabulous}}</text></view>
 				</view>
@@ -39,25 +39,31 @@
 			<view class="list">
 				<view class="li noborder">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="text" @click="getIdForUser(user.ID)">根据ID</view>
+					<view class="text" @click="getIdForUser(userInfo.ID)">根据ID</view>
 				</view>
 			</view>
 			<view class="list">
 				<view class="li noborder">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="text" @click="getTokenForUser(user.Token)">根据Token</view>
+					<view class="text" @click="getTokenForUser(userInfo.Token)">根据Token</view>
 				</view>
 			</view>
 			<view class="list">
 				<view class="li noborder">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="text" @click="isRight(user.Token)">模拟用户答题</view>
+					<view class="text" @click="isRight(userInfo.Token)">模拟用户答题</view>
 				</view>
 			</view>
 			<view class="list">
 				<view class="li noborder">
 					<image class="icon" src="../../static/logo.png"></image>
-					<view class="text" @click="updateIntegral(user.Token)">修改积分</view>
+					<view class="text" @click="updateIntegral(userInfo.Token)">修改积分</view>
+				</view>
+			</view>
+			<view class="list">
+				<view class="li noborder">
+					<image class="icon" src="../../static/logo.png"></image>
+					<view class="text" @click="loginOut">退出</view>
 				</view>
 			</view>
 		</view>
@@ -67,28 +73,27 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex'
 	var websock;
 	import * as api from '../../static/js/api.js'
 	export default {
 		data() {
 			return {
-				money: 200,
-				Fabulous: 300,
-				user: "",
+				money: 0,
+				Fabulous: 0,
 				UserInfoByID: '',
 				UserInfoByToken: '',
 				IntegralData: '',
-				Answer:''
+				Answer: ''
 			}
 		},
-
+		computed: {
+			...mapState(['userInfo', 'login'])
+		},
 		methods: {
-			selectUserInfo() {
-				const that = this
-				const userInfo = localStorage.getItem("userInfo");
-				that.user = JSON.parse(userInfo);
-				console.log(that.user)
-			},
 			//用户点击操作方法 
 			//根据用户令牌得到用户
 			getTokenForUser(token) {
@@ -123,9 +128,9 @@
 			isRight(token) {
 				const strAnswer = {
 					"AccountName": token,
-					"QuestionID":1,
-					'Reply':'1',
-					"RecordID":1090,
+					"QuestionID": 1,
+					'Reply': '1',
+					"RecordID": 1090,
 				}
 				const jsonAnswer = JSON.stringify(strAnswer);
 				const action = {
@@ -135,15 +140,14 @@
 				}
 				this.websocketsend(action)
 			},
-			
+
 			//修改用户积分
-			updateIntegral(token){
+			updateIntegral(token) {
 				const strToken = {
 					"AccountName": token,
-					"Integral":38
+					"Integral": 38
 				}
 				const jsonToken = JSON.stringify(strToken);
-				
 				const action = {
 					"Message": jsonToken,
 					"Tag": "ac",
@@ -170,7 +174,7 @@
 						this.UserInfoByToken = objData.Data;
 						console.log('根据Token:' + this.UserInfoByToken);
 					}
-				}else if (strData.ActionMethod == "RecordQuestionBLL.IsRight") {
+				} else if (strData.ActionMethod == "RecordQuestionBLL.IsRight") {
 					var res = JSON.parse(strData.Message);
 					console.log('模拟答题：' + JSON.stringify(res))
 					var objData = typeof res == 'object' ? res : res
@@ -178,7 +182,7 @@
 						this.Answer = objData.Data;
 						console.log('模拟答题:' + this.Answer);
 					}
-				}else if (strData.ActionMethod == "UserBLL.UpdateIntegral") {
+				} else if (strData.ActionMethod == "UserBLL.UpdateIntegral") {
 					var res = JSON.parse(strData.Message);
 					console.log('修改积分：' + JSON.stringify(res))
 					var objData = typeof res == 'object' ? res : res
@@ -188,9 +192,8 @@
 					}
 				}
 			},
-		
 			//通信方法
-				initWebSocket() {
+			initWebSocket() {
 				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
 				websock.onmessage = this.webSocketClientOnmessage //接收信息
@@ -199,7 +202,7 @@
 			},
 			webSocketClientOnopen() {
 				let entity = {
-					"FromUser": this.user.Token,
+					"FromUser": this.userInfo.Token,
 					"Tag": "c"
 				};
 				this.websocketsend(entity);
@@ -216,13 +219,12 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
+			...mapMutations(['loginOut'])
 		},
 		created() {
-			this.selectUserInfo();
 			this.initWebSocket();
 		},
-		onLoad() {
-		}
+
 	}
 </script>
 

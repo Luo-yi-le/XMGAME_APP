@@ -6,7 +6,9 @@
     "pages/load/load",
     "pages/play/play",
     "pages/over/over",
-    "pages/register/register"
+    "pages/register/register",
+    "pages/record/record",
+    "pages/roomGet/roomGet"
   ],
   "subPackages": [],
   "window": {
@@ -40,5 +42,5 @@
     "autoclose": false
   },
   "appname": "Game02",
-  "compilerVersion": "1.9.1"
+  "compilerVersion": "1.9.4"
 }

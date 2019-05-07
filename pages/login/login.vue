@@ -4,13 +4,13 @@
 			<view><text>账号1:</text><text>{{test_loginId1}}</text>
 				<text>密码:</text><text>{{test_pwd1}}</text>
 				<text @click="getTest1()">
-					<使用账号1>
+					《使用账号1》
 				</text>
 			</view>
 			<view><text>账号2:</text><text>{{test_loginId2}}</text>
 				<text>密码:</text><text>{{test_pwd2}}</text>
 				<text @click="getTest2()">
-					<使用账号2>
+					《使用账号2》
 				</text>
 			</view>
 		</view>
@@ -23,10 +23,10 @@
 			<input type="password" class="content_view3" v-model="user.password" id="userpwd" placeholder="  密码/请输入登录密码"
 			 maxlength="12" />
 			<view class="content_view4">
-				<button class="content_but" @click="login()">登陆</button>
+				<button class="content_but" @click="bindLogin()">登陆</button>
 			</view>
 			<view class="content_view5">
-				<text class="content_text1" @click="onreg">注册新用户</text>
+				<text class="content_text1" @click="onreg()">注册新用户</text>
 				<text class="content_text2">忘记密码</text>
 			</view>
 			<view class="content_view6"></view>
@@ -50,6 +50,10 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapMutations
+	} from 'vuex';
 	var websock;
 	import * as api from '../../static/js/api.js'
 	export default {
@@ -67,7 +71,10 @@
 				test_pwd2: '123',
 			}
 		},
-		onLoad() {},
+		// onLoad() {
+		// 	//判断是否有登陆过
+		// 	
+		// },
 		methods: {
 			onreg: function(e) {
 				uni.navigateTo({
@@ -77,7 +84,7 @@
 
 			//用户操作（测试）
 			//登陆
-			login() {
+			bindLogin() {
 				//调用WebSocket（只有登陆和注册需要用户操作点击，其他的视情况而定）
 				this.initWebSocket();
 			},
@@ -91,15 +98,15 @@
 				this.user.accountName = this.test_loginId2
 				this.user.password = this.test_pwd2
 			},
-			
+
 			//打开控制台
-			openConsole() {
-				var el = new Image();
-				Object.defineProperty(el, 'id', {
-					get: function() {}
-				});
-				console.log('%cl', el);
-			},
+			// openConsole() {
+			// 	var el = new Image();
+			// 	Object.defineProperty(el, 'id', {
+			// 		get: function() {}
+			// 	});
+			// 	console.log('l', el);
+			// },
 			//发送通信并回收
 			//打开连接
 			webSocketClientOnopen() {
@@ -122,9 +129,18 @@
 				var data = JSON.parse(e.data);
 				var res = JSON.parse(data.Message)
 				if (res.Code == 200) {
+					this.login({
+						userInfo:res.Data,
+					})
 					console.log(res.Data);
 					//使用uni-app中的暂存 确保第二次免登
-					localStorage.setItem('userInfo', JSON.stringify(res.Data))
+					uni.setStorage({
+						key: 'userInfo',
+						data: res.Data,
+						success: function() {
+							console.log('success' + res.Data);
+						}
+					});
 					//提示用户登陆成功
 					uni.showToast({
 						title: res.Data.AccountName + res.Message,
@@ -140,10 +156,10 @@
 					alert('请检查账号密码是否正确！')
 				}
 			},
-			
+
 			//连接通信
 			//创建WebSocket连接
-			initWebSocket() {
+			initWebSocket: function() {
 				websock = new WebSocket(api.wsuri);
 				websock.onopen = this.webSocketClientOnopen //打开
 				websock.onmessage = this.webSocketClientOnmessage //接收信息
@@ -164,11 +180,21 @@
 			webSocketClientOnclose(e) {
 				console.log("websock连接关闭", e);
 			},
-
+			...mapMutations(['login'])
 		},
 
 		created() {
-			this.openConsole();
+			//this.openConsole();
+			uni.getStorage({
+				key: 'userInfo',
+				success: function(res) {
+					if (res.data != null || res.data != '') {
+						uni.reLaunch({
+							url: '../index/index'
+						})
+					}
+				}
+			});
 		}
 	}
 </script>
